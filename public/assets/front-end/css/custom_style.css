@@ -1,0 +1,76 @@
+  .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+     
+    .popup {
+       background: #fff;
+    padding: 50px 60px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    }
+
+    .popup h2 {
+      margin: 0 0 15px;
+      color: #e74c3c;
+      font-size: 18px;
+    }
+
+    .popup a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+}
+     
+    #alert:target {
+      display: flex;
+    }
+    
+    
+
+
+ .card-header-custom:not(.collapsed) {
+    color: #ffffff;
+    background-color: #140b49 !important;
+     border-radius: 5px !important;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .125);
+}
+.card-header-custom button{
+    color: #fff;
+    font-weight: bold;
+     margin: 5px;
+}
+.card-header-custom button:hover{
+    color: #ffff00;
+}
+.permissions{
+    margin: 10px;
+}
+.permissions input[type="checkbox" ]{
+    transform: scale(1.2);
+
+}
+.permissions label{
+    margin-left: 10px;
+}
+
+
+ 
+ 
+
