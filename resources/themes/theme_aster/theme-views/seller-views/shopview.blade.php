@@ -414,6 +414,7 @@
           data-url="{{ route('shopView',['id' => ($shopInfoArray['id'] != 0 ? $shopInfoArray['id'] : 0)]) }}"
           data-brand="{{ $data['brand_id'] ?? '' }}"
           data-category_id="{{ $data['category_id'] ?? '' }}"
+          data-sub_category_id="{{ $data['category_id'] ?? '' }}"
           data-name="{{ request('search') ?? request('name') }}"
           data-from="{{ request('data_from') }}"
           data-offer = "{{ request('offer_type') }}"

@@ -56,7 +56,8 @@ class ProductUpdateRequest extends FormRequest
             'minimum_order_qty' => 'required|numeric|min:1',
             'code' => [
                 'required',
-                'regex:/^[a-zA-Z0-9]+$/',
+                //'regex:/^[a-zA-Z0-9]+$/',
+                'regex:/^[a-zA-Z0-9\-_\.]+$/',
                 'min:6',
                 'max:20',
                 Rule::unique('products', 'code')->ignore($product->id, 'id'),

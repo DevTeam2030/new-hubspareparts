@@ -9358,4 +9358,8 @@ return [
 	"NO_Contacts" => "NO Contacts",
 	"No.Of_Poles" => "No.Of Poles",
 	"Control_Voltage" => "Control Voltage",
+	"Filter items" => "Filter items",
+	"offer_type" => "Offer type",
+	"offer type" => "Offer type",
+	"Main_Category_is_required" => "Main Category is required",
 ];

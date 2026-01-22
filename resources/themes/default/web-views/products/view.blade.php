@@ -16,20 +16,78 @@
           content="{{ substr(strip_tags(str_replace('&nbsp;', ' ', $web_config['about']->value)),0,160) }}">
 @endpush
 <style>
+    .filter-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+
     .filter-item {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        width: 100%;
-        opacity: 0.75;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 6px;
         cursor: pointer;
-        margin-bottom: 6px;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .filter-item:hover {
+        background-color: #edf2ff;
     }
 
     .filter-item input[type="checkbox"] {
-        cursor: pointer;
+        display: none;
     }
 
+    .custom-checkbox {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #dee2e6;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .filter-item input:checked + .custom-checkbox {
+        background-color: #4361ee;
+        border-color: #4361ee;
+    }
+
+    .check-icon {
+        width: 12px;
+        height: 10px;
+        stroke: white;
+        stroke-width: 2;
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .filter-item input:checked + .custom-checkbox .check-icon {
+        opacity: 1;
+    }
+
+    .filter-text {
+        font-size: 14px;
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .filter-item input:checked ~ .filter-text {
+        color: #4361ee;
+        font-weight: 600;
+    }
 </style>
 @section('content')
 
@@ -147,13 +205,17 @@
                             </div>
 
                             <div class="filter-options">
-                                <h3>{{$category?->name}} </h3>
-
                                 @foreach($attributes as $key=>$attribute)
-                                <label class="filter-item-{{$key}}">
-                                    <span>{{$attribute}}</span>
-                                    <input type="checkbox" id="filter-item-{{$key}}" name="attributes[]" value="{{$key}}">
-                                </label>
+                                    <label class="filter-item filter-item-{{$key}}">
+                                        <input type="checkbox" id="filter-item-{{$key}}" name="category_attributes[]" value="{{$key}}"
+                                               @if(in_array($key, request('category_attributes', []))) checked @endif>
+                                        <span class="custom-checkbox">
+            <svg class="check-icon" viewBox="0 0 12 10">
+                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+            </svg>
+        </span>
+                                        <span class="filter-text">{{$attribute}}</span>
+                                    </label>
                                 @endforeach
                             </div>
 
@@ -427,7 +489,7 @@
           data-message="{{ translate('items_found') }}"
           data-publishing-house-id="{{ request('publishing_house_id') }}"
           data-author-id="{{ request('author_id') }}"
-          data-offer="{{ request('offer_type') ?? '' }}"
+          data-offer="{{ ('offer_type') ?? '' }}"
     ></span>
 
 @endsection

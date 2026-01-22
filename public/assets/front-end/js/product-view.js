@@ -1,6 +1,10 @@
 "use strict";
 
 let productListPageBackup = $('#products-search-data-backup');
+let category_attributes = [];
+$('input[name="category_attributes[]"]:checked').each(function () {
+    category_attributes.push($(this).val());
+});
 let productListPageData = {
     id: productListPageBackup.data('id'),
     name: productListPageBackup.data('name'),
@@ -16,6 +20,7 @@ let productListPageData = {
     vendor_id: productListPageBackup.data('vendor-id'),
     author_id: productListPageBackup.data('author-id'),
     publishing_house_id: productListPageBackup.data('publishing-house-id'),
+    category_attributes: category_attributes
 };
 function getProductListFilterRender() {
     const baseUrl = productListPageBackup.data('url');
@@ -111,4 +116,13 @@ $(".search-product-attribute").on("keyup", function () {
     $(this).closest('.search-product-attribute-container').find(".attribute-list ul>li").show().filter(function () {
         return $(this).text().toLowerCase().trim().indexOf(value) == -1;
     }).hide();
+});
+
+$('.filter-options input[name="category_attributes[]"]').on('change', function () {
+    let category_attributes = [];
+    $('.filter-options input[name="category_attributes[]"]:checked').each(function () {
+        category_attributes.push($(this).val());
+    });
+    productListPageData.category_attributes = category_attributes;
+    getProductListFilterRender();
 });
