@@ -42,7 +42,8 @@ class ProductAddRequest extends Request
             'unit_price' => 'required' . '|' . 'numeric' . '|' . 'gt' . ':0',
             'discount' => 'required' . '|' . 'gt' . ':-1',
             'shipping_cost' => 'required_if' . ':' . 'product_type' . ',==,' . 'physical' . '|' . 'gt' . ':-1',
-            'code' => 'required' . '|' . 'regex:/^[a-zA-Z0-9]+$/' . '|' . 'min' . ':6|' . 'max' . ':20|' . 'unique' . ':products',
+            //'code' => 'required' . '|' . 'regex:/^[a-zA-Z0-9]+$/' . '|' . 'min' . ':6|' . 'max' . ':20|' . 'unique' . ':products',
+            'code' => 'required' . '|' . 'regex:/^[a-zA-Z0-9\-_\.]+$/' . '|' . 'min' . ':6|' . 'max' . ':20|' . 'unique' . ':products',
             'minimum_order_qty' => 'required' . '|' . 'numeric' . '|' . 'min' . ':1',
         ];
 
