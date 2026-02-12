@@ -52,6 +52,15 @@
                             </div>
                             <input type="hidden" name="lang[]" value="{{ $lang }}">
                             <div class="form-group pt-2">
+                                <label class="title-color" for="{{ $lang }}_short_description">
+                                    {{ translate('short_description') }} ({{ strtoupper($lang) }})
+                                    @if($lang == $defaultLanguage)
+                                        <span class="input-required-icon">*</span>
+                                    @endif
+                                </label>
+                                <textarea class="summernote {{ $lang == $defaultLanguage ? 'product-short-description-default-language' : '' }}" name="short_description[]">{{ old('short_description') }}</textarea>
+                            </div>
+                            <div class="form-group pt-2">
                                 <label class="title-color" for="{{ $lang }}_description">
                                     {{ translate('description') }} ({{ strtoupper($lang) }})
                                     @if($lang == $defaultLanguage)
@@ -216,6 +225,26 @@
                                 <input type="text" minlength="6" id="generate_number" name="code"
                                        class="form-control" value="{{ old('code') }}"
                                        placeholder="{{ translate('ex').': 161183'}}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color">
+                                    {{ translate('reference_number') }}
+                                </label>
+                                <input type="text" name="reference_number"
+                                       class="form-control" value="{{ old('reference_number') }}"
+                                       placeholder="{{ translate('ex').': 12.345'}}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color">
+                                    {{ translate('shelf_number') }}
+                                </label>
+                                <input type="text" name="shelf_number"
+                                       class="form-control" value="{{ old('shelf_number') }}"
+                                       placeholder="{{ translate('ex').': 1.5'}}">
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">
@@ -452,6 +481,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        
                     </div>
                 </div>
             </div>

@@ -6403,6 +6403,7 @@ return [
     "product_Attributes" => "Product Attributes",
     "product_Barcode" => "Product Barcode",
     "product_Bulk_Import" => "Product Bulk Import",
+    "product_bulk_import_excel" => "Product Bulk Import Via Excel",
     "product_Discount" => "Product Discount",
     "product_Edit" => "Product Edit",
     "product_Edit dsf" => "Product Edit dsf",

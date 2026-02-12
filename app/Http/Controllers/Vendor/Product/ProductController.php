@@ -106,6 +106,8 @@ class ProductController extends BaseController
             'sub_category_id' => $request['sub_category_id'],
             'sub_sub_category_id' => $request['sub_sub_category_id'],
             'request_status' => $type == 'new-request' ? 0 : ($type == 'approved' ? '1' : ($type == 'denied' ? '2' : 'all')),
+            'reference_number' => $request['reference_number'],
+            'shelf_number' => $request['shelf_number'],
         ];
         $searchValue = $request['searchValue'];
         $products = $this->productRepo->getListWhere(
@@ -451,6 +453,8 @@ class ProductController extends BaseController
             'sub_category_id' => $request['sub_category_id'],
             'sub_sub_category_id' => $request['sub_sub_category_id'],
             'request_status' => $type == 'new-request' ? 0 : ($type == 'approved' ? 1 : ($type == 'denied' ? 2 : 'all')),
+            'reference_number' => $request['reference_number'],
+            'shelf_number' => $request['shelf_number'],
         ];
         $products = $this->productRepo->getListWhere(orderBy: ['id' => 'desc'], searchValue: $request['searchValue'], filters: $filters, relations: ['translations'], dataLimit: 'all');
 

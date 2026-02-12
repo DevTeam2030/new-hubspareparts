@@ -116,7 +116,8 @@ if (!function_exists('getLanguageName')) {
 if (!function_exists('getLanguageCode')) {
     function getLanguageCode(string $country_code): string
     {
-        $locales = array('af-ZA',
+        $locales = array(
+            'af-ZA',
             'am-ET',
             'ar-AE',
             'ar-BH',
@@ -263,7 +264,8 @@ if (!function_exists('getLanguageCode')) {
             'zh-HK',
             'zh-MO',
             'zh-SG',
-            'zh-TW');
+            'zh-TW'
+        );
 
         foreach ($locales as $locale) {
             $locale_region = explode('-', $locale);

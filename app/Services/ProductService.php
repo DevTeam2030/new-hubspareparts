@@ -5,9 +5,14 @@ namespace App\Services;
 use App\Enums\UserRole;
 use App\Enums\ViewPaths\Admin\Product;
 use App\Events\RestockProductNotificationEvent;
+use App\Exports\ProductBlueprintExport;
+use App\Imports\ProductImport;
+use App\Imports\ProductMasterImport;
 use App\Models\Color;
 use App\Traits\FileManagerTrait;
+use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use phpDocumentor\Reflection\Types\Boolean;
 use Rap2hpoutre\FastExcel\FastExcel;
 use function React\Promise\all;
@@ -400,6 +405,8 @@ class ProductService
             'user_id' => $addedBy == 'admin' ? auth('admin')->id() : auth('seller')->id(),
             'name' => $request['name'][array_search('en', $request['lang'])],
             'code' => $request['code'],
+            'reference_number' => $request['reference_number'] ?? null,
+            'shelf_number' => $request['shelf_number'] ?? null,
             'slug' => $this->getSlug($request),
             'category_ids' => json_encode($this->getCategoriesArray(request: $request)),
             'category_id' => $request['category_id'],
@@ -412,6 +419,7 @@ class ProductService
             'digital_file_ready_storage_type' => $digitalFile ? $storage : null,
             'product_type' => $request['product_type'],
             'details' => $request['description'][array_search('en', $request['lang'])],
+            'short_description' => $request['short_description'][array_search('en', $request['lang'])] ?? null,
             'colors' => $this->getColorsObject(request: $request),
             'choice_options' => $request['product_type'] == 'physical' ? json_encode($this->getChoiceOptions(request: $request)) : json_encode([]),
             'variation' => $request['product_type'] == 'physical' ? json_encode($variations) : json_encode([]),
@@ -476,6 +484,8 @@ class ProductService
         $dataArray = [
             'name' => $request['name'][array_search('en', $request['lang'])],
             'code' => $request['code'],
+            'reference_number' => $request['reference_number'] ?? null,
+            'shelf_number' => $request['shelf_number'] ?? null,
             'product_type' => $request['product_type'],
             'category_ids' => json_encode($this->getCategoriesArray(request: $request)),
             'category_id' => $request['category_id'],
@@ -485,6 +495,7 @@ class ProductService
             'unit' => $request['product_type'] == 'physical' ? $request['unit'] : null,
             'digital_product_type' => $request['product_type'] == 'digital' ? $request['digital_product_type'] : null,
             'details' => $request['description'][array_search('en', $request['lang'])],
+            'short_description' => $request['short_description'][array_search('en', $request['lang'])] ?? null,
             'colors' => $this->getColorsObject(request: $request),
             'choice_options' => $request['product_type'] == 'physical' ? json_encode($this->getChoiceOptions(request: $request)) : json_encode([]),
             'variation' => $request['product_type'] == 'physical' ? json_encode($variations) : json_encode([]),
@@ -970,5 +981,39 @@ class ProductService
             }
         }
         return true;
+    }
+
+    public function downloadExcelImportTemplate()
+    {
+        try {
+            return Excel::download(new ProductBlueprintExport, 'products_import_template.xlsx');
+        } catch (\Exception $e) {
+            Toastr::error($e->getMessage());
+            return redirect()->back();
+        }
+    }
+
+    public function importNewBulkProduct(object $request)
+    {
+        try {
+            $productImport = new ProductImport();
+            $import = new ProductMasterImport($productImport);
+
+            Excel::import($import, $request->file('excel_file'));
+
+            $failures = $productImport->getFailures();
+            if (count($failures)) {
+                return back()->with([
+                    'error_type' => 'warning',
+                    'failures' => $failures
+                ])->with('message', translate('Import completed with errors in :rows_count row(s)', ['rows_count' => count($failures)]));
+            }
+
+            Toastr::success(translate('Products imported successfully'));
+            return back();
+        } catch (\Exception $e) {
+            Toastr::error($e->getMessage());
+            return back();
+        }
     }
 }

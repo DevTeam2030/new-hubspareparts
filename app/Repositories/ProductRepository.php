@@ -182,6 +182,10 @@ class ProductRepository implements ProductRepositoryInterface
             return $query->where(['sub_category_id' => $filters['sub_category_id']]);
         })->when(isset($filters['sub_sub_category_id']) && !empty($filters['sub_sub_category_id']) && $filters['sub_sub_category_id'] != 'all', function ($query) use ($filters) {
             return $query->where(['sub_sub_category_id' => $filters['sub_sub_category_id']]);
+        })->when(isset($filters['reference_number']) && !empty($filters['reference_number']), function ($query) use ($filters) {
+            return $query->where('reference_number', 'like', '%'.$filters['reference_number'].'%');
+        })->when(isset($filters['shelf_number']) && !empty($filters['shelf_number']), function ($query) use ($filters) {
+            return $query->where('shelf_number', 'like', '%'.$filters['shelf_number'].'%');
         })->when(isset($filters['is_shipping_cost_updated']), function ($query) use ($filters) {
             return $query->where(['is_shipping_cost_updated' => $filters['is_shipping_cost_updated']]);
         })->when(isset($filters['status']), function ($query) use ($filters) {
