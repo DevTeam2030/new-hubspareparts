@@ -120,7 +120,7 @@ class ProductSheet implements FromArray, WithHeadings, WithTitle, WithEvents, Wi
         $lastSubRow = $subCategorySheet->getHighestRow();
         
         // Read data from Sub Categories sheet
-        for ($j = 2; $j <= $lastSubRow; $j++) { // ابدأ من الصف 2
+        for ($j = 2; $j <= $lastSubRow; $j++) { // Start from row 2
             $subCategoryName = $subCategorySheet->getCell('A' . $j)->getValue();
             $categoryName = $subCategorySheet->getCell('B' . $j)->getValue();
             
