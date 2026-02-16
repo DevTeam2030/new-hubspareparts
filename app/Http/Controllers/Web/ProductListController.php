@@ -72,7 +72,7 @@ class ProductListController extends Controller
             'activeBrands' => $activeBrands,
             'categories' => $categories,
             'attributes' => $attributes,
-            'category' => $category ,
+            'category' => isset($request['category_id']) ?? $category ,
         ]);
     }
 
@@ -262,6 +262,7 @@ class ProductListController extends Controller
             'publishing_house_id' => $request['publishing_house_id'],
             'search_category_value' => $request['search_category_value'],
             'product_name' => $request['product_name'],
+            'category_attributes' => $request['category_attributes'],
             'page' => $request['page'] ?? 1,
         ];
     }

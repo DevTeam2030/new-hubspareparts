@@ -12,6 +12,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\FlashDealAddRequest;
 use App\Http\Requests\Admin\FlashDealUpdateRequest;
 use App\Http\Requests\Admin\ProductIDRequest;
+use App\Models\Category;
 use App\Services\FlashDealService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Contracts\View\View;
@@ -91,10 +92,13 @@ class FlashDealController extends BaseController
 
     public function getAddProductView($deal_id): View
     {
-        $products = $this->productRepo->getListWithScope(
-            scope: "active",
-            relations: ['brand','category','seller.shop'],
-            dataLimit: 'all');
+        $categories = Category::where('parent_id' , 0)->get();
+//        $products = $this->productRepo->getListWithScope(
+//            scope: "active",
+//            relations: ['brand','category','seller.shop'],
+//            dataLimit: 'all');
+
+        $products = [];
 
         $flashDealProducts = $this->flashDealProductRepo->getListWhere(filters:['flash_deal_id'=>$deal_id])->pluck('product_id')->toArray();
 
@@ -107,7 +111,7 @@ class FlashDealController extends BaseController
             relations: ['brand','category','seller.shop'],
             dataLimit: getWebConfig('pagination_limit'));
 
-        return view(FlashDeal::ADD_PRODUCT[VIEW], compact('deal', 'products', 'dealProducts'));
+        return view(FlashDeal::ADD_PRODUCT[VIEW], compact('deal', 'products', 'dealProducts' , 'categories'));
     }
 
     public function addProduct(ProductIDRequest $request, $deal_id, FlashDealService $flashDealService): RedirectResponse

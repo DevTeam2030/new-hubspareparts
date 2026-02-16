@@ -293,6 +293,7 @@ class ProductService
                 $item['price'] = currencyConverter(abs($request['price_' . str_replace('.', '_', $str)]));
                 $item['sku'] = $request['sku_' . str_replace('.', '_', $str)];
                 $item['qty'] = abs($request['qty_' . str_replace('.', '_', $str)]);
+                $item['status'] = $request->has('status_' . str_replace('.', '_', $str)) ? 1 : 0;
                 $variations[] = $item;
             }
         }
@@ -766,6 +767,7 @@ class ProductService
                     'price' => $unitPrice,
                     'sku' => str_replace(' ', '', $sku),
                     'qty' => 1,
+                    'status' => 1,
                 ];
             }
         }

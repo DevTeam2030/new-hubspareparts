@@ -8,6 +8,7 @@ use App\Contracts\Repositories\TranslationRepositoryInterface;
 use App\Enums\ViewPaths\Admin\DealOfTheDay;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\ProductIDRequest;
+use App\Models\Category;
 use App\Services\DealOfTheDayService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Contracts\View\View;
@@ -37,18 +38,20 @@ class DealOfTheDayController extends BaseController
 
     public function getListView(Request $request): View
     {
-        $products = $this->productRepo->getListWithScope(
-            scope: "active",
-            relations: ['brand','category','seller.shop'],
-            dataLimit: 'all',
-        );
 
+        $products = [];
+//        $products = $this->productRepo->getListWithScope(
+//            scope: "active",
+//            relations: ['brand','category','seller.shop'],
+//            dataLimit: 'all',
+//        );
+        $categories = Category::where('parent_id' , 0)->get();
         $deals = $this->dealOfTheDayRepo->getListWhere(
             orderBy: ['id'=>'desc'],
             searchValue: $request['searchValue'],
             dataLimit: getWebConfig('pagination_limit')
         );
-        return view(DealOfTheDay::LIST[VIEW], compact('deals', 'products'));
+        return view(DealOfTheDay::LIST[VIEW], compact('deals', 'products' , 'categories'));
     }
 
     public function add(ProductIDRequest $request, DealOfTheDayService $dealOfTheDayService): RedirectResponse
@@ -64,13 +67,15 @@ class DealOfTheDayController extends BaseController
     public function getUpdateView($deal_id): View
     {
         $deal = $this->dealOfTheDayRepo->getFirstWhereWithoutGlobalScope(params: ['id' => $deal_id], relations: ['product']);
-        $products = $this->productRepo->getListWithScope(
-            orderBy: ['id'=>'desc'],
-            scope: "active",
-            relations: ['brand','category','seller.shop'],
-            dataLimit: 'all',
-        );
-        return view(DealOfTheDay::UPDATE[VIEW], compact('deal', 'products'));
+//        $products = $this->productRepo->getListWithScope(
+//            orderBy: ['id'=>'desc'],
+//            scope: "active",
+//            relations: ['brand','category','seller.shop'],
+//            dataLimit: 'all',
+//        );
+        $products = [] ;
+        $categories = Category::where('parent_id' , 0)->get();
+        return view(DealOfTheDay::UPDATE[VIEW], compact('deal', 'products' , 'categories'));
     }
 
     public function update(Request $request, $deal_id, DealOfTheDayService $dealOfTheDayService): RedirectResponse

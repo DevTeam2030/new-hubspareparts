@@ -28,6 +28,9 @@
                     {{ translate('Variation_Wise_Stock') }}
                 </label>
             </th>
+            <th class="text-center">
+                <label class="control-label">{{ translate('Status') }}</label>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -60,6 +63,22 @@
                            value="{{ $combination['qty'] }}" min="1" max="100000" step="1"
                            class="form-control" placeholder="{{ translate('ex') }}: {{ translate('5') }}"
                            required>
+                </td>
+                <td class="text-center">
+{{--                    <label class="switcher mx-auto-{{ $combination['type']}}">--}}
+{{--                        <input type="checkbox"--}}
+{{--                               name="status_{{ $combination['type'] }}"--}}
+{{--                               value="1"--}}
+{{--                            {{ ($combination['status'] == 0) ? '' : 'checked' }}>--}}
+{{--                        <span class="switcher_control"></span>--}}
+{{--                    </label>--}}
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" name="status_{{ $combination['type'] }}" id="status_{{ $combination['type'] }}" checked>
+                        <label class="form-check-label" for="status_{{ $combination['type'] }}">
+
+                        </label>
+                    </div>
                 </td>
             </tr>
         @endforeach

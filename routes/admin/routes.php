@@ -175,6 +175,7 @@ use App\Http\Controllers\Admin\Deliveryman\DeliveryManCashCollectController;
 use App\Http\Controllers\Admin\Settings\StorageConnectionSettingsController;
 use App\Http\Controllers\Admin\Settings\VendorRegistrationSettingController;
 use App\Http\Controllers\Admin\Notification\PushNotificationSettingsController;
+use App\Http\Controllers\Admin\AdminAjaxActionController;
 
 
 Route::controller(SharedController::class)->group(function () {
@@ -337,6 +338,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::post(Category::DELETE[URI], 'delete')->name('delete');
             Route::post(Category::STATUS[URI], 'updateStatus')->name('status');
             Route::get(Category::EXPORT[URI], 'getExportList')->name('export');
+
 
         });
     });
@@ -1234,6 +1236,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
 //            ->name('areas.calculate-shipping');
     });
 
+    Route::get('category/get-sub-category', [AdminAjaxActionController::class, 'get_sub_category'])->name('get-sub-category');
+    Route::get('products/get-products', [AdminAjaxActionController::class, 'get_products'])->name('ajax-get-products');
+    Route::get('products/get-products-clearance', [AdminAjaxActionController::class, 'get_products_clearance'])->name('ajax-get-products-clearance');
     Route::patch(
         '/admin/vendors/{id}/points',
         [VendorController::class, 'updatePoints']

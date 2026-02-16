@@ -2425,6 +2425,22 @@ class ProductManager
                 return in_array($product->rating, $request['rating']);
             });
         }
+        $productListData = $productListData->filter(function ($product) use ($request) {
+            if (!$request->filled('category_attributes')) {
+                return true; // Keep all products if no filter
+            }
+
+            $productAttributes = json_decode($product->attributes, true) ?? [];
+
+            // Check if product has ALL requested attributes
+            foreach ($request->category_attributes as $attribute) {
+                if (!in_array($attribute, $productAttributes)) {
+                    return false; // Product missing this attribute
+                }
+            }
+
+            return true; // Product has all attributes
+        });
         return $productListData;
     }
 

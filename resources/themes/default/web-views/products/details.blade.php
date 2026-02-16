@@ -947,4 +947,129 @@
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/product-details.js') }}"></script>
     <script type="text/javascript" async="async"
             src="https://platform-api.sharethis.com/js/sharethis.js#property=5f55f75bde227f0012147049&product=sticky-share-buttons"></script>
+
+    <script>
+        // Product variation data for dynamic option enabling/disabling
+        const productChoiceOptions = @json($product->choice_options ? json_decode($product->choice_options) : []);
+        const productVariations = @json($product->variation ? json_decode($product->variation) : []);
+
+        // Track which choices have been actively selected by the user
+        let userSelectedChoices = {};
+
+        $(document).ready(function() {
+            // Don't update on initial load - let all options be available
+            // updateOptionStates();
+
+            // Listen for changes on choice option radio buttons
+            $('input[type="radio"][name^="choice_"]').on('change', function() {
+                // Mark this choice as user-selected
+                userSelectedChoices[$(this).attr('name')] = true;
+                updateOptionStates();
+            });
+        });
+
+        function updateOptionStates() {
+            if (productChoiceOptions.length === 0 || productVariations.length === 0) {
+                return;
+            }
+
+            // Get currently selected values ONLY for choices that user has actively selected
+            const selectedValues = {};
+            productChoiceOptions.forEach(function(choice) {
+                // Only consider this choice if user has actively selected it
+                if (userSelectedChoices[choice.name]) {
+                    const selectedOption = $('input[name="' + choice.name + '"]:checked');
+                    if (selectedOption.length > 0) {
+                        selectedValues[choice.name] = selectedOption.val();
+                    }
+                }
+            });
+
+            // For each choice option, check if it should be enabled or disabled
+            productChoiceOptions.forEach(function(choice, choiceIndex) {
+                choice.options.forEach(function(option) {
+                    const radioId = '{{ str_replace(' ', '', '') }}' + choice.name + '-' + option.replace(/ /g, '');
+                    const radioInput = $('#' + radioId);
+                    const radioLabel = $('label[for="' + radioId + '"]');
+
+                    // Generate all possible combinations with this option
+                    const possibleCombinations = generateCombinationsWithOption(choice.name, option, selectedValues);
+
+                    // Check if at least one combination is valid (status = 1)
+                    let hasValidCombination = false;
+
+                    possibleCombinations.forEach(function(combination) {
+                        const variationType = productChoiceOptions.map(function(c) {
+                            return combination[c.name];
+                        }).join('-');
+
+                        const matchingVariation = productVariations.find(function(v) {
+                            return v.type === variationType;
+                        });
+
+                        if (matchingVariation && matchingVariation.status == 1) {
+                            hasValidCombination = true;
+                        }
+                    });
+
+                    // Disable if no valid combination exists
+                    if (!hasValidCombination) {
+                        radioInput.prop('disabled', true);
+                        radioLabel.addClass('disabled').css({
+                            'opacity': '0.5',
+                            'cursor': 'not-allowed',
+                            'pointer-events': 'none'
+                        });
+                    } else {
+                        radioInput.prop('disabled', false);
+                        radioLabel.removeClass('disabled').css({
+                            'opacity': '1',
+                            'cursor': 'pointer',
+                            'pointer-events': 'auto'
+                        });
+                    }
+                });
+            });
+        }
+
+        function generateCombinationsWithOption(fixedChoiceName, fixedOption, selectedValues) {
+            const combinations = [];
+            const otherChoices = productChoiceOptions.filter(c => c.name !== fixedChoiceName);
+
+            if (otherChoices.length === 0) {
+                const combo = {};
+                combo[fixedChoiceName] = fixedOption;
+                combinations.push(combo);
+                return combinations;
+            }
+
+            // Generate combinations considering already selected values
+            function generateRecursive(index, currentCombo) {
+                if (index >= otherChoices.length) {
+                    currentCombo[fixedChoiceName] = fixedOption;
+                    combinations.push({...currentCombo});
+                    return;
+                }
+
+                const choice = otherChoices[index];
+
+                // If this choice already has a selected value, use only that value
+                if (selectedValues[choice.name]) {
+                    const newCombo = {...currentCombo};
+                    newCombo[choice.name] = selectedValues[choice.name];
+                    generateRecursive(index + 1, newCombo);
+                } else {
+                    // Otherwise, try all options for this choice
+                    choice.options.forEach(function(option) {
+                        const newCombo = {...currentCombo};
+                        newCombo[choice.name] = option;
+                        generateRecursive(index + 1, newCombo);
+                    });
+                }
+            }
+
+            generateRecursive(0, {});
+            return combinations;
+        }
+    </script>
 @endpush

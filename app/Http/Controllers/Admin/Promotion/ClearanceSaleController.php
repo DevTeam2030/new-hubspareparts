@@ -8,6 +8,7 @@ use App\Contracts\Repositories\StockClearanceSetupRepositoryInterface;
 use App\Enums\ViewPaths\Admin\ClearanceSale;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Admin\ClearanceSaleSetupRequest;
+use App\Models\Category;
 use App\Services\ClearanceSaleService;
 use App\Services\ProductService;
 use App\Services\StockClearanceProductService;
@@ -42,14 +43,16 @@ class ClearanceSaleController extends BaseController
 
     public function getView($request): View
     {
-        $clearanceProductIds = $this->stockClearanceProductRepo->getListWhere(filters: ['added_by' => 'admin'])->pluck('product_id')->toArray();
-        $products = $this->productRepo->getListWithScope(
-            orderBy: ['id' => 'desc'],
-            scope: "active",
-            filters: ['added_by' => 'in_house'],
-            whereNotIn: ['id' => $clearanceProductIds],
-            relations: ['brand', 'category', 'seller.shop'],
-            dataLimit: 'all');
+        $clearanceProductIds = $this->stockClearanceProductRepo->getListWhere(filters: ['added_by' => 'admin' ] )->pluck('product_id')->toArray();
+
+        $products = [];
+//        $products = $this->productRepo->getListWithScope(
+//            orderBy: ['id' => 'desc'],
+//            scope: "active",
+//            filters: ['added_by' => 'in_house'],
+//            whereNotIn: ['id' => $clearanceProductIds],
+//            relations: ['brand', 'category', 'seller.shop'],
+//            dataLimit: 'all');
 
         $inhouseShop = $this->getInHouseShopObject();
         $clearanceConfig = $this->stockClearanceSetupRepo->getFirstWhere(params: ['setup_by' => 'admin']);
@@ -59,7 +62,8 @@ class ClearanceSaleController extends BaseController
             filters: ['added_by' => 'admin'],
             relations: ['product']
         );
-        return view(ClearanceSale::LIST[VIEW], ['clearanceConfig' => $clearanceConfig, 'products' => $products, 'stockClearanceProduct' => $stockClearanceProduct, 'inhouseShop' => $inhouseShop]);
+        $categories = Category::where('parent_id' , 0)->get();
+        return view(ClearanceSale::LIST[VIEW], ['clearanceConfig' => $clearanceConfig, 'products' => $products, 'stockClearanceProduct' => $stockClearanceProduct, 'inhouseShop' => $inhouseShop , 'categories'=>$categories]);
     }
 
     public function updateStatus(Request $request): JsonResponse

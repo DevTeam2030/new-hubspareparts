@@ -54,7 +54,29 @@
                                     </div>
                                     <input type="hidden" name="lang[]" value="{{$lang}}" id="lang">
                                 @endforeach
+
                                 <div class="row">
+                                    <div class="col-md-4 mt-3">
+                                        <label for="category_id" class="title-color">{{ translate('category')}}</label>
+                                        <select class="form-control" name="category_id" id="category_id">
+                                            <option value="" selected disabled>{{ translate('select_category')}}</option>
+                                            @foreach($categories as $category)
+                                                <option value="{{$category->id}}">{{$category->name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <label for="sub_category_id" class="title-color">{{ translate('sub_category')}}</label>
+                                        <select class="form-control" name="sub_category_id" id="sub_category_id">
+                                            <option value="" selected disabled>{{ translate('select_sub_category')}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <label for="sub_sub_category_id" class="title-color">{{ translate('sub_sub_category')}}</label>
+                                        <select class="form-control" name="sub_sub_category_id" id="sub_sub_category_id">
+                                            <option value="" selected disabled>{{ translate('select_sub_sub_category')}}</option>
+                                        </select>
+                                    </div>
                                     <div class="col-md-12 mt-3">
                                         <label for="name" class="title-color">{{ translate('products')}}</label>
                                         <input type="text" class="product_id" name="product_id"
@@ -96,5 +118,64 @@
 @push('script')
     <script src="{{dynamicAsset(path: 'public/assets/back-end/js/search-product.js')}}"></script>
     <script src="{{dynamicAsset(path: 'public/assets/back-end/js/admin/deal.js')}}"></script>
+    <script>
+        $('#category_id').on('change', function () {
+            let id = $(this).val();
+            $.get({
+                url: '{{url('/')}}/admin/category/get-sub-category?category_id=' + id,
+                dataType: 'json',
+                success: function (data) {
+                    $('#sub_category_id').empty().append('<option value="" selected disabled>{{translate("select_sub_category")}}</option>');
+                    $('#sub_sub_category_id').empty().append('<option value="" selected disabled>{{translate("select_sub_sub_category")}}</option>');
+                    $.each(data, function (index, value) {
+                        $('#sub_category_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                },
+            });
+        });
+
+        $('#sub_category_id').on('change', function () {
+            let id = $(this).val();
+            $.get({
+                url: '{{url('/')}}/admin/category/get-sub-category?category_id=' + id,
+                dataType: 'json',
+                success: function (data) {
+                    $('#sub_sub_category_id').empty().append('<option value="" selected disabled>{{translate("select_sub_sub_category")}}</option>');
+                    $.each(data, function (index, value) {
+                        $('#sub_sub_category_id').append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                },
+            });
+        });
+
+        $(document).ready(function() {
+            // Function to fetch products based on categories
+            function filterProducts() {
+                let category_id = $('#category_id').val();
+                let sub_category_id = $('#sub_category_id').val();
+                let sub_sub_category_id = $('#sub_sub_category_id').val();
+
+                $.get({
+                    url: '{{ route("admin.ajax-get-products") }}',
+                    data: {
+                        category_id: category_id,
+                        sub_category_id: sub_category_id,
+                        sub_sub_category_id: sub_sub_category_id
+                    },
+                    beforeSend: function () {
+                        $('.search-result-box').html('<div class="text-center p-4"><i class="tio-dev-loader-1 spin"></i></div>');
+                    },
+                    success: function (data) {
+                        $('.search-result-box').html(data.result);
+                    },
+                });
+            }
+
+            // Trigger filter when any dropdown changes
+            $('#category_id, #sub_category_id, #sub_sub_category_id').on('change', function () {
+                filterProducts();
+            });
+        });
+    </script>
 @endpush
 

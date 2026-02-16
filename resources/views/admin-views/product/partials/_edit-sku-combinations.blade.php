@@ -28,6 +28,9 @@
                     {{ translate('Variation_Wise_Stock') }}
                 </label>
             </th>
+            <th class="text-center">
+                <label class="control-label">{{ translate('Status') }}</label>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -60,6 +63,14 @@
                            value="{{ $combination['qty'] }}" min="0" max="100000" step="1"
                            class="form-control" placeholder="{{ translate('ex') }}: {{ translate('5') }}"
                            required>
+                </td>
+                <td>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" name="status_{{ $combination['type'] }}" id="status_{{ $combination['type'] }}" @checked(isset($combination['status']) && $combination['status'] == 1)>
+                        <label class="form-check-label" for="status_{{ $combination['type'] }}">
+
+                        </label>
+                    </div>
                 </td>
             </tr>
         @endforeach

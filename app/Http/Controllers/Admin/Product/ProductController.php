@@ -616,6 +616,7 @@ class ProductController extends BaseController
                 $item['price'] = currencyConverter(amount: abs($request['price_' . str_replace('.', '_', $str)]));
                 $item['sku'] = $request['sku_' . str_replace('.', '_', $str)];
                 $item['qty'] = abs($request['qty_' . str_replace('.', '_', $str)]);
+                $item['status'] = $request->has('status_' . str_replace('.', '_', $str)) ? 1 : 0;
                 $variations[] = $item;
             }
         }
