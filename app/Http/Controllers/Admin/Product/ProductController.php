@@ -31,6 +31,7 @@ use App\Events\ProductRequestStatusUpdateEvent;
 use App\Exports\ProductListExport;
 use App\Exports\RestockProductListExport;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Admin\ImportProductRequest;
 use App\Http\Requests\Admin\ProductDenyRequest;
 use App\Http\Requests\ProductAddRequest;
 use App\Http\Requests\ProductUpdateRequest;
@@ -57,33 +58,32 @@ class ProductController extends BaseController
     }
 
     public function __construct(
-        private readonly AuthorRepositoryInterface                  $authorRepo,
-        private readonly DigitalProductAuthorRepositoryInterface    $digitalProductAuthorRepo,
-        private readonly DigitalProductPublishingHouseRepository    $digitalProductPublishingHouseRepo,
-        private readonly PublishingHouseRepositoryInterface         $publishingHouseRepo,
-        private readonly CategoryRepositoryInterface                $categoryRepo,
-        private readonly BrandRepositoryInterface                   $brandRepo,
-        private readonly ProductRepositoryInterface                 $productRepo,
-        private readonly CustomerRepositoryInterface                $customerRepo,
-        private readonly RestockProductRepositoryInterface          $restockProductRepo,
-        private readonly RestockProductCustomerRepositoryInterface  $restockProductCustomerRepo,
+        private readonly AuthorRepositoryInterface $authorRepo,
+        private readonly DigitalProductAuthorRepositoryInterface $digitalProductAuthorRepo,
+        private readonly DigitalProductPublishingHouseRepository $digitalProductPublishingHouseRepo,
+        private readonly PublishingHouseRepositoryInterface $publishingHouseRepo,
+        private readonly CategoryRepositoryInterface $categoryRepo,
+        private readonly BrandRepositoryInterface $brandRepo,
+        private readonly ProductRepositoryInterface $productRepo,
+        private readonly CustomerRepositoryInterface $customerRepo,
+        private readonly RestockProductRepositoryInterface $restockProductRepo,
+        private readonly RestockProductCustomerRepositoryInterface $restockProductCustomerRepo,
         private readonly DigitalProductVariationRepositoryInterface $digitalProductVariationRepo,
-        private readonly StockClearanceProductRepositoryInterface   $stockClearanceProductRepo,
-        private readonly StockClearanceSetupRepositoryInterface     $stockClearanceSetupRepo,
-        private readonly ProductSeoRepositoryInterface              $productSeoRepo,
-        private readonly VendorRepositoryInterface                  $sellerRepo,
-        private readonly ColorRepositoryInterface                   $colorRepo,
-        private readonly AttributeRepositoryInterface               $attributeRepo,
-        private readonly TranslationRepositoryInterface             $translationRepo,
-        private readonly CartRepositoryInterface                    $cartRepo,
-        private readonly WishlistRepositoryInterface                $wishlistRepo,
-        private readonly FlashDealProductRepositoryInterface        $flashDealProductRepo,
-        private readonly DealOfTheDayRepositoryInterface            $dealOfTheDayRepo,
-        private readonly ReviewRepositoryInterface                  $reviewRepo,
-        private readonly BannerRepositoryInterface                  $bannerRepo,
-        private readonly ProductService                             $productService,
-    )
-    {
+        private readonly StockClearanceProductRepositoryInterface $stockClearanceProductRepo,
+        private readonly StockClearanceSetupRepositoryInterface $stockClearanceSetupRepo,
+        private readonly ProductSeoRepositoryInterface $productSeoRepo,
+        private readonly VendorRepositoryInterface $sellerRepo,
+        private readonly ColorRepositoryInterface $colorRepo,
+        private readonly AttributeRepositoryInterface $attributeRepo,
+        private readonly TranslationRepositoryInterface $translationRepo,
+        private readonly CartRepositoryInterface $cartRepo,
+        private readonly WishlistRepositoryInterface $wishlistRepo,
+        private readonly FlashDealProductRepositoryInterface $flashDealProductRepo,
+        private readonly DealOfTheDayRepositoryInterface $dealOfTheDayRepo,
+        private readonly ReviewRepositoryInterface $reviewRepo,
+        private readonly BannerRepositoryInterface $bannerRepo,
+        private readonly ProductService $productService,
+    ) {
     }
 
     /**
@@ -188,18 +188,30 @@ class ProductController extends BaseController
             'category_id' => $request['category_id'],
             'sub_category_id' => $request['sub_category_id'],
             'sub_sub_category_id' => $request['sub_sub_category_id'],
+            'reference_number' => $request['reference_number'],
+            'shelf_number' => $request['shelf_number'],
         ];
 
-        $products = $this->productRepo->getListWhere(orderBy: ['id' => 'desc'], searchValue: $request['searchValue'], filters: $filters, relations: ['clearanceSale' => function ($query) {
-            return $query->active();
-        }], dataLimit: getWebConfig(name: WebConfigKey::PAGINATION_LIMIT));
+        $products = $this->productRepo->getListWhere(orderBy: ['id' => 'desc'], searchValue: $request['searchValue'], filters: $filters, relations: [
+            'clearanceSale' => function ($query) {
+                return $query->active();
+            }
+        ], dataLimit: getWebConfig(name: WebConfigKey::PAGINATION_LIMIT));
         $sellers = $this->sellerRepo->getByStatusExcept(status: 'pending', relations: ['shop'], paginateBy: getWebConfig(name: WebConfigKey::PAGINATION_LIMIT));
         $brands = $this->brandRepo->getListWhere(filters: ['status' => 1], dataLimit: 'all');
         $categories = $this->categoryRepo->getListWhere(filters: ['position' => 0], dataLimit: 'all');
         $subCategory = $this->categoryRepo->getFirstWhere(params: ['id' => $request['sub_category_id']]);
         $subSubCategory = $this->categoryRepo->getFirstWhere(params: ['id' => $request['sub_sub_category_id']]);
-        return view(Product::LIST[VIEW], compact('products', 'sellers', 'brands',
-            'categories', 'subCategory', 'subSubCategory', 'filters', 'type'));
+        return view(Product::LIST [VIEW], compact(
+            'products',
+            'sellers',
+            'brands',
+            'categories',
+            'subCategory',
+            'subSubCategory',
+            'filters',
+            'type'
+        ));
     }
 
     public function getUpdateView(string|int $id): View|RedirectResponse
@@ -362,9 +374,19 @@ class ProductController extends BaseController
             return redirect()->route('admin.products.list', ['in_house']);
         }
         $isActive = $this->productRepo->getWebFirstWhereActive(params: ['id' => $id]);
-        $relations = ['category', 'brand', 'reviews', 'rating', 'orderDetails', 'orderDelivered', 'digitalVariation', 'seoInfo', 'clearanceSale' => function ($query) {
-            return $query->active();
-        }];
+        $relations = [
+            'category',
+            'brand',
+            'reviews',
+            'rating',
+            'orderDetails',
+            'orderDelivered',
+            'digitalVariation',
+            'seoInfo',
+            'clearanceSale' => function ($query) {
+                return $query->active();
+            }
+        ];
         $product = $this->productRepo->getFirstWhereWithoutGlobalScope(params: ['id' => $id], relations: $relations);
         $product['priceSum'] = $product?->orderDelivered->sum('price');
         $product['qtySum'] = $product?->orderDelivered->sum('qty');
@@ -656,6 +678,23 @@ class ProductController extends BaseController
         return back();
     }
 
+    // New Bulk Import
+
+    public function downloadExcelImportTemplate(ProductService $service)
+    {
+        return $service->downloadExcelImportTemplate();
+    }
+
+    public function getNewBulkImportView(): View
+    {
+        return view(Product::BULK_IMPORT[VIEW]);
+    }
+
+    public function importNewBulkProduct(ImportProductRequest $request, ProductService $service): RedirectResponse
+    {
+        return $service->importNewBulkProduct(request: $request);
+    }
+
     public function updatedProductList(Request $request): View
     {
         $filters = [
@@ -835,8 +874,14 @@ class ProductController extends BaseController
         $categories = $this->categoryRepo->getListWhere(filters: ['position' => 0], dataLimit: 'all');
         $subCategory = $this->categoryRepo->getFirstWhere(params: ['id' => $request['sub_category_id']]);
         $totalRestockProducts = $this->restockProductRepo->getListWhere(filters: $filters, dataLimit: 'all')->count();
-        return view(Product::REQUEST_RESTOCK_LIST[VIEW], compact('restockProducts', 'brands',
-            'categories', 'subCategory', 'filters', 'totalRestockProducts'));
+        return view(Product::REQUEST_RESTOCK_LIST[VIEW], compact(
+            'restockProducts',
+            'brands',
+            'categories',
+            'subCategory',
+            'filters',
+            'totalRestockProducts'
+        ));
     }
 
     public function exportRestockList(Request $request): BinaryFileResponse

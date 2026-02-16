@@ -80,6 +80,22 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="reference_number" class="title-color">{{ translate('reference_number') }}</label>
+                                <input type="text" name="reference_number" class="form-control" 
+                                       value="{{ request('reference_number') }}" 
+                                       placeholder="{{ translate('search_by_reference_number') }}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="shelf_number" class="title-color">{{ translate('shelf_number') }}</label>
+                                <input type="text" name="shelf_number" class="form-control" 
+                                       value="{{ request('shelf_number') }}" 
+                                       placeholder="{{ translate('search_by_shelf_number') }}">
+                            </div>
+                        </div>
                         <div class="col-12">
                             <div class="d-flex gap-3 justify-content-end">
                                 <a href="{{ route('vendor.products.list', ['type'=>request('type')]) }}"
@@ -148,6 +164,7 @@
                             <tr>
                                 <th>{{ translate('SL') }}</th>
                                 <th class="text-capitalize">{{ translate('product_name') }}</th>
+                                <th class="text-center text-capitalize">{{ translate('reference_number') }}</th>
                                 <th class="text-center text-capitalize">{{ translate('product_type') }}</th>
                                 <th class="text-center text-capitalize">{{ translate('unit_price') }}</th>
                                 <th class="text-center text-capitalize">{{ translate('verify_status') }}</th>
@@ -177,6 +194,9 @@
                                             @endif
                                         </div>
                                         </a>
+                                    </td>
+                                    <td class="text-center">
+                                        {{ $product['reference_number'] ?? '-' }}
                                     </td>
                                     <td class="text-center">
                                         {{ translate($product['product_type']) }}

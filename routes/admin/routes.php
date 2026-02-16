@@ -268,8 +268,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::get(Product::DELETE_IMAGE[URI], 'deleteImage')->name('delete-image');
             Route::get(Product::GET_VARIATIONS[URI], 'getVariations')->name('get-variations');
             Route::post(Product::UPDATE_QUANTITY[URI], 'updateQuantity')->name('update-quantity');
-            Route::get(Product::BULK_IMPORT[URI], 'getBulkImportView')->name('bulk-import');
-            Route::post(Product::BULK_IMPORT[URI], 'importBulkProduct');
+            
+            // New Bulk Import
+            Route::get(Product::BULK_IMPORT[DOWNLOAD_EXCEL_IMPORT_TEMPLATE_URI], 'downloadExcelImportTemplate')->name('download-excel-import-template');
+            Route::get(Product::BULK_IMPORT[URI], 'getNewBulkImportView')->name('bulk-import');
+            Route::post(Product::BULK_IMPORT[URI], 'importNewBulkProduct')->name('post-bulk-import');
+
             Route::get(Product::UPDATED_PRODUCT_LIST[URI], 'updatedProductList')->name('updated-product-list');
             Route::post(Product::UPDATED_SHIPPING[URI], 'updatedShipping')->name('updated-shipping');
             Route::post(Product::DENY[URI], 'deny')->name('deny');
@@ -620,19 +624,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::post(FeatureDeal::STATUS[URI], 'updateStatus')->name('feature-status');
         });
 
-         Route::group(['prefix' => 'clearance-sale', 'as' => 'clearance-sale.'], function () {
-             Route::controller(ClearanceSaleController::class)->group(function () {
-                 Route::get(ClearanceSale::LIST[URI], 'index')->name('index');
-                 Route::post(ClearanceSale::STATUS[URI], 'updateStatus')->name('status-update');
-                 Route::post(ClearanceSale::UPDATE_CONFIG[URI], 'updateClearanceConfig')->name('update-config');
-                 Route::get(ClearanceSale::SEARCH[URI], 'getSearchedProductsView')->name('search-product-for-clearance');
-                 Route::get(ClearanceSale::MULTIPLE_PRODUCT_DETAILS[URI], 'getMultipleProductDetailsView')->name('multiple-clearance-product-details');
-                 Route::post(ClearanceSale::ADD_PRODUCT[URI], 'addClearanceProduct')->name('add-product');
-                 Route::post(ClearanceSale::PRODUCT_STATUS[URI], 'updateProductStatus')->name('product-status-update');
-                 Route::delete(ClearanceSale::CLEARANCE_DELETE[URI] . '/{product_id}', 'deleteClearanceProduct')->name('clearance-delete');
-                 Route::delete(ClearanceSale::CLEARANCE_PRODUCTS_DELETE[URI] , 'deleteClearanceAllProduct')->name('clearance-delete-all-product');
-                 Route::post(ClearanceSale::UPDATE_DISCOUNT[URI], 'updateDiscountAmount')->name('update-discount');
-             });
+        Route::group(['prefix' => 'clearance-sale', 'as' => 'clearance-sale.'], function () {
+            Route::controller(ClearanceSaleController::class)->group(function () {
+                Route::get(ClearanceSale::LIST[URI], 'index')->name('index');
+                Route::post(ClearanceSale::STATUS[URI], 'updateStatus')->name('status-update');
+                Route::post(ClearanceSale::UPDATE_CONFIG[URI], 'updateClearanceConfig')->name('update-config');
+                Route::get(ClearanceSale::SEARCH[URI], 'getSearchedProductsView')->name('search-product-for-clearance');
+                Route::get(ClearanceSale::MULTIPLE_PRODUCT_DETAILS[URI], 'getMultipleProductDetailsView')->name('multiple-clearance-product-details');
+                Route::post(ClearanceSale::ADD_PRODUCT[URI], 'addClearanceProduct')->name('add-product');
+                Route::post(ClearanceSale::PRODUCT_STATUS[URI], 'updateProductStatus')->name('product-status-update');
+                Route::delete(ClearanceSale::CLEARANCE_DELETE[URI] . '/{product_id}', 'deleteClearanceProduct')->name('clearance-delete');
+                Route::delete(ClearanceSale::CLEARANCE_PRODUCTS_DELETE[URI], 'deleteClearanceAllProduct')->name('clearance-delete-all-product');
+                Route::post(ClearanceSale::UPDATE_DISCOUNT[URI], 'updateDiscountAmount')->name('update-discount');
+            });
 
             Route::controller(ClearanceSaleVendorOfferController::class)->group(function () {
                 Route::get(ClearanceSale::VENDOR_OFFERS[URI], 'index')->name('vendor-offers');
@@ -1215,7 +1219,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::put('governorates/{id}', 'update')->name('governorates.update');
             Route::delete('governorates/{id}', 'destroy')->name('governorates.destroy');
         });
-          // Delivery time Routes
+        // Delivery time Routes
         Route::group(['prefix' => 'delivery-times', 'as' => 'delivery-times.'], function () {
             Route::controller(DeliveryTimeController::class)->group(function () {
                 Route::get('/', 'index')->name('view');
@@ -1227,7 +1231,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             });
         });
 
-//       // get the times and notes for governorate
+        //       // get the times and notes for governorate
 //        Route::get('delivery-times/by-governorate', [DeliveryTimeController::class, 'getTimesByGovernorate'])
 //            ->name('delivery-times.by-governorate');
 //

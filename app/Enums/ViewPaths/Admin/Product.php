@@ -116,7 +116,8 @@ enum Product
 
     const BULK_IMPORT = [
         URI => 'bulk-import',
-        VIEW => 'admin-views.product.bulk-import'
+        VIEW => 'admin-views.product.new-bulk-import',
+        DOWNLOAD_EXCEL_IMPORT_TEMPLATE_URI => 'download-excel-import-template'
     ];
 
     const REQUEST_RESTOCK_LIST = [

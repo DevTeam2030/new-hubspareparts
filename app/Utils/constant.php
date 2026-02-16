@@ -86,3 +86,4 @@ const DASHBOARD_DATA_LIMIT = 6;
 const DASHBOARD_TOP_SELL_DATA_LIMIT = 5;
 const TABLE_VIEW = 'table_view';
 const FILTER_PRODUCT_DATA_LIMIT = 10;
+const DOWNLOAD_EXCEL_IMPORT_TEMPLATE_URI = 'download-excel-import-template';

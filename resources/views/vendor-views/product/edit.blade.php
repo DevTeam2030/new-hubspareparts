@@ -45,6 +45,9 @@
                                     if ($translation->locale == $language && $translation->key == "description") {
                                         $translate[$language]['description'] = $translation->value;
                                     }
+                                    if ($translation->locale == $language && $translation->key == "short_description") {
+                                        $translate[$language]['short_description'] = $translation->value;
+                                    }
                                 }
                             }
                             ?>
@@ -63,6 +66,12 @@
                                        class="form-control" placeholder="{{ translate('new_Product') }}" required>
                             </div>
                             <input type="hidden" name="lang[]" value="{{ $language}}">
+                            <div class="form-group pt-4">
+                                <label class="title-color">{{ translate('short_description') }}
+                                    ({{strtoupper($language) }})</label>
+                                <textarea name="short_description[]" class="summernote"
+                                >{!! $translate[$language]['short_description']??$product['short_description'] !!}</textarea>
+                            </div>
                             <div class="form-group pt-4">
                                 <label class="title-color">{{ translate('description') }}
                                     ({{strtoupper($language) }})</label>
@@ -225,6 +234,26 @@
 
                                 <input type="text" id="generate_number" name="code" class="form-control"
                                        value="{{request('product-gallery') ? ' ':$product->code}}" placeholder="{{translate('4FOITO')}}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color">
+                                    {{ translate('reference_number') }}
+                                </label>
+                                <input type="text" name="reference_number"
+                                       class="form-control" value="{{ $product->reference_number }}"
+                                       placeholder="{{ translate('ex').': 12.345'}}">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color">
+                                    {{ translate('shelf_number') }}
+                                </label>
+                                <input type="text" name="shelf_number"
+                                       class="form-control" value="{{ $product->shelf_number }}"
+                                       placeholder="{{ translate('ex').': 1.5'}}">
                             </div>
                         </div>
                         <div class="col-md-6 col-lg-4 col-xl-3 physical_product_show">

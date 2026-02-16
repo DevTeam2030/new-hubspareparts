@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
  * @property string $added_by
  * @property string $name
  * @property string $code
+ * @property string $reference_number
+ * @property string $shelf_number
  * @property string $slug
  * @property int $category_id
  * @property int $sub_category_id
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\DB;
  * @property string $digital_product_type
  * @property string $product_type
  * @property string $details
+ * @property string $short_description
  * @property int $min_qty
  * @property int $published
  * @property float $tax
@@ -68,6 +71,8 @@ class Product extends Model
         'added_by',
         'name',
         'code',
+        'reference_number',
+        'shelf_number',
         'slug',
         'category_ids',
         'category_id',
@@ -78,6 +83,7 @@ class Product extends Model
         'digital_product_type',
         'product_type',
         'details',
+        'short_description',
         'colors',
         'choice_options',
         'variation',
@@ -125,6 +131,8 @@ class Product extends Model
         'added_by' => 'string',
         'name' => 'string',
         'code' => 'string',
+        'reference_number' => 'string',
+        'shelf_number' => 'string',
         'slug' => 'string',
         'category_id' => 'integer',
         'sub_category_id' => 'integer',
@@ -134,6 +142,7 @@ class Product extends Model
         'digital_product_type' => 'string',
         'product_type' => 'string',
         'details' => 'string',
+        'short_description' => 'string',
         'min_qty' => 'integer',
         'published' => 'integer',
         'tax' => 'float',
@@ -376,6 +385,14 @@ class Product extends Model
             return $detail;
         }
         return $this->translations[1]->value ?? $detail;
+    }
+
+    public function getShortDescriptionAttribute($shortDescription): string|null
+    {
+        if (strpos(url()->current(), '/admin') || strpos(url()->current(), '/vendor') || strpos(url()->current(), '/seller')) {
+            return $shortDescription;
+        }
+        return $this->translations[2]->value ?? $shortDescription;
     }
     public function getThumbnailFullUrlAttribute(): string|null|array
     {

@@ -159,6 +159,8 @@
                                     <th>{{ translate('tax') }}</th>
                                     <th>{{ translate('item_discount') }}</th>
                                     <th>{{ translate('total_price') }}</th>
+                                    <th>{{ translate('reference_number') }}</th>
+                                    <th>{{ translate('shelf_number') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -228,6 +230,12 @@
                                             </td>
                                             <td>
                                                 {{ setCurrencySymbol(usdToDefaultCurrency($subtotal)) }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $productDetails->reference_number ?? $detail->productAllStatus?->reference_number ?? '-' }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ $productDetails->shelf_number ?? $detail->productAllStatus?->shelf_number ?? '-' }}
                                             </td>
                                         </tr>
 
