@@ -18,6 +18,7 @@ class ProductImport implements ToCollection, WithHeadingRow
 {
     protected $failures = [];
     protected $categoryCache = [];
+    protected int $successCount = 0;
 
     public function collection(Collection $rows)
     {
@@ -262,6 +263,8 @@ class ProductImport implements ToCollection, WithHeadingRow
                     );
                 }
 
+                $this->successCount++;
+
             } catch (Throwable $e) {
                 $this->failures[] = [
                     'row' => $index + 2,
@@ -405,5 +408,10 @@ class ProductImport implements ToCollection, WithHeadingRow
     public function getFailures(): array
     {
         return $this->failures;
+    }
+
+    public function getSuccessCount(): int
+    {
+        return $this->successCount;
     }
 }
