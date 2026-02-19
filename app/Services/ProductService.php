@@ -1004,14 +1004,30 @@ class ProductService
             Excel::import($import, $request->file('excel_file'));
 
             $failures = $productImport->getFailures();
+            $successCount = $productImport->getSuccessCount();
+
             if (count($failures)) {
+                $summaryMessage = translate('Import_completed_summary');
+                $summaryMessage = str_replace(
+                    [':success_count', ':fail_count'],
+                    [$successCount, count($failures)],
+                    $summaryMessage
+                );
+
+                Toastr::warning($summaryMessage);
+
                 return back()->with([
                     'error_type' => 'warning',
-                    'failures' => $failures
-                ])->with('message', translate('Import completed with errors in :rows_count row(s)', ['rows_count' => count($failures)]));
+                    'failures' => $failures,
+                ]);
             }
 
-            Toastr::success(translate('Products imported successfully'));
+            if ($successCount > 0) {
+                Toastr::success(translate('Products imported successfully'));
+            } else {
+                Toastr::error(translate('No_products_were_imported'));
+            }
+
             return back();
         } catch (\Exception $e) {
             Toastr::error($e->getMessage());
