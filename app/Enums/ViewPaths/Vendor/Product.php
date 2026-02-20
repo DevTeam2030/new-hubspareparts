@@ -92,7 +92,8 @@ enum Product
 
     const BULK_IMPORT = [
         URI => 'bulk-import',
-        VIEW => 'vendor-views.product.bulk-import'
+        VIEW => 'vendor-views.product.new-bulk-import',
+        DOWNLOAD_EXCEL_IMPORT_TEMPLATE_URI => 'download-excel-import-template'
     ];
     const SEARCH = [
         URI => 'search',

@@ -30,6 +30,7 @@ use App\Exports\RestockProductListExport;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\ProductAddRequest;
 use App\Http\Requests\ProductUpdateRequest;
+use App\Http\Requests\Vendor\ImportProductRequest;
 use App\Repositories\DigitalProductPublishingHouseRepository;
 use App\Repositories\TranslationRepository;
 use App\Services\ProductService;
@@ -736,6 +737,23 @@ class ProductController extends BaseController
         $this->productRepo->addArray(data: $dataArray['products']);
         Toastr::success($dataArray['message']);
         return back();
+    }
+
+    // New Bulk Import
+
+    public function downloadExcelImportTemplate(ProductService $service)
+    {
+        return $service->downloadExcelImportTemplate();
+    }
+
+    public function getNewBulkImportView(): View
+    {
+        return view(Product::BULK_IMPORT[VIEW]);
+    }
+
+    public function importNewBulkProduct(ImportProductRequest $request, ProductService $service): RedirectResponse
+    {
+        return $service->importNewBulkProduct(request: $request);
     }
 
     public function getSearchedProductsView(Request $request): JsonResponse
