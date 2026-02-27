@@ -998,6 +998,10 @@ class ProductService
     public function importNewBulkProduct(object $request)
     {
         try {
+            if (function_exists('set_time_limit')) {
+                @set_time_limit(300);
+            }
+
             $productImport = new ProductImport();
             $import = new ProductMasterImport($productImport);
 
@@ -1014,24 +1018,32 @@ class ProductService
                     $summaryMessage
                 );
 
-                Toastr::warning($summaryMessage);
-
                 return back()->with([
                     'error_type' => 'warning',
                     'failures' => $failures,
+                    'import_status' => [
+                        'type' => 'warning',
+                        'message' => $summaryMessage,
+                    ],
                 ]);
             }
 
             if ($successCount > 0) {
-                Toastr::success(translate('Products imported successfully'));
-            } else {
-                Toastr::error(translate('No_products_were_imported'));
+                return back()->with('import_status', [
+                    'type' => 'success',
+                    'message' => translate('Products imported successfully'),
+                ]);
             }
 
-            return back();
+            return back()->with('import_status', [
+                'type' => 'error',
+                'message' => translate('No_products_were_imported'),
+            ]);
         } catch (\Exception $e) {
-            Toastr::error($e->getMessage());
-            return back();
+            return back()->with('import_status', [
+                'type' => 'error',
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 }

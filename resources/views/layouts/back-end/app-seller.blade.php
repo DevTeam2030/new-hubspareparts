@@ -118,6 +118,11 @@
           data-currency-symbol="{{ getCurrencySymbol(currencyCode: getCurrencyCode(type: 'default')) }}"></span>
 
     {!! Toastr::message() !!}
+    @if(session('import_status'))
+        <script>
+            toastr["{{ session('import_status.type') }}"](`{{ session('import_status.message') }}`);
+        </script>
+    @endif
     @if ($errors->any())
         <script>
             @foreach ($errors->all() as $error)
