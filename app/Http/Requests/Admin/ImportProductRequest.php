@@ -14,7 +14,16 @@ class ImportProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "excel_file" => "required|file|mimes:xlsx|max:10240",
+            'excel_file' => [
+                'required',
+                'file',
+                'max:10240',
+                function ($attribute, $value, $fail) {
+                    if (!$value || strtolower($value->getClientOriginalExtension()) !== 'xlsx') {
+                        $fail(translate('The_file_must_be_an_Excel_file_of_type_xlsx'));
+                    }
+                },
+            ],
         ];
     }
 

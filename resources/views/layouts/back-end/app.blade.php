@@ -137,6 +137,11 @@
 <script src="{{dynamicAsset(path: 'public/assets/back-end/js/app-script.js')}}"></script>
 
 {!! Toastr::message() !!}
+@if(session('import_status'))
+    <script>
+        toastr["{{ session('import_status.type') }}"](`{{ session('import_status.message') }}`);
+    </script>
+@endif
 
 @if ($errors->any())
     <script>
