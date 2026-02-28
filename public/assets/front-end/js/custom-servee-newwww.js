@@ -900,14 +900,44 @@ $(".clickable").click(function () {
     return false;
 });
 
-function addWishlist(product_id, collectionId = null, quantity = 1, modalId = null) {
+function addWishlist(product_id, collectionId = null, quantity = 1, modalId = null, formData = null) {
     $.ajaxSetup({
         headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
     });
+    
+    // Prepare data object
+    let data = {
+        product_id: product_id,
+        collection_id: collectionId,
+        quantity: quantity
+    };
+    
+    // If form data is provided, extract variation and variant information
+    if (formData) {
+        console.log('Form data captured:', formData);
+        formData.forEach(function(item) {
+            console.log('Processing item:', item.name, item.value);
+            if (item.name === 'product_variation_code' && item.value) {
+                data.variation = item.value;
+            }
+            if (item.name === 'variant_key' && item.value) {
+                data.variant = item.value;
+            }
+            if (item.name === 'color' && item.value) {
+                data.color = item.value;
+            }
+            // Capture all choice option fields
+            if (item.name !== 'product_id' && item.name !== 'quantity' && item.name !== '_token' && item.name !== 'collection_id') {
+                data[item.name] = item.value;
+            }
+        });
+        console.log('Final data being sent:', data);
+    }
+    
     $.ajax({
         url: $("#route-store-wishlist").data("url"),
         method: "POST",
-        data: {product_id: product_id  , collection_id: collectionId , quantity: quantity},
+        data: data,
         success: function (data) {
             if (data.value == 1) {
                 $(".countWishlist").html(data.count);
@@ -1257,7 +1287,9 @@ function commonFunctionalityForProductView() {
         let id = $(this).data("product-id");
         let collectionId = $("#collection_id").val();
         let quantity = $("#quantity").val();
-        addWishlist(id , collectionId , quantity);
+        let formSelector = ".add-to-cart-details-form";
+        let formData = $(formSelector).serializeArray();
+        addWishlist(id, collectionId, quantity, null, formData);
     });
 
     $(".product-restock-request-button").on("click", function () {

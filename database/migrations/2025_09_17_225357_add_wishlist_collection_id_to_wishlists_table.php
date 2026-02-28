@@ -10,6 +10,8 @@ return new class extends Migration {
         Schema::table('wishlists', function (Blueprint $table) {
             $table->bigInteger('quantity')->nullable()->after('product_id');
             $table->unsignedBigInteger('wishlist_collection_id')->nullable()->after('quantity');
+            $table->string('variation')->nullable()->after('wishlist_collection_id');
+            $table->string('variant')->nullable()->after('variation');
         });
     }
 

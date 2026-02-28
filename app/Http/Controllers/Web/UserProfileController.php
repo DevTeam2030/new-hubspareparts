@@ -30,12 +30,14 @@ use App\Models\Wishlist;
 use App\Traits\CommonTrait;
 use App\Models\User;
 use App\Utils\CustomerManager;
+use App\Utils\Helpers;
 use App\Utils\ImageManager;
 use App\Utils\OrderManager;
 use App\Models\WishlistCollection;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\View as FacadesView;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -1406,7 +1408,29 @@ class UserProfileController extends Controller
         }
         $users =$this->getRelatedAccounts();
 
-        $wishlist = Wishlist::whereIn('customer_id' , $users)->where('wishlist_collection_id' , $collectionId)->get();
+        $wishlist = Wishlist::whereIn('customer_id' , $users)->where('wishlist_collection_id' , $collectionId)
+            ->with(['wishlistProduct'])
+            ->get();
+            
+        // Set default variation/variant if null
+        $wishlist->each(function($item) {
+            // Handle variation data - it might be JSON string or already decoded
+            if (!empty($item->variation)) {
+                // If variation is already a string, try to decode it
+                $decodedVariation = json_decode($item->variation);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decodedVariation)) {
+                    // It was valid JSON, use the first variation's type if available
+                    $item->variation = $decodedVariation[0]->type ?? $item->variation;
+                }
+                // If it's not valid JSON, keep as-is (might be simple string)
+            } elseif ($item->wishlistProduct) {
+                // If variation is empty, try to get from product
+                $variations = json_decode($item->wishlistProduct->variation ?? '[]');
+                if (!empty($variations) && isset($variations[0])) {
+                    $item->variation = $variations[0]->type ?? '';
+                }
+            }
+        });
 
         return view(VIEW_FILE_NAMES['account_view_wishlist_collection'] , compact('collection' ,  'wishlist'));
 
@@ -1434,6 +1458,30 @@ class UserProfileController extends Controller
         $collection->eng_proc_user_id = ($request->approved==1) ? \auth('customer')->id() : null;
         $collection->save();
         return response()->json(['type' => 'success', 'msg' => 'collection updated']);
+    }
+
+    public function exportWishlistCollection(Request $request)
+    {
+        $collectionId = $request['id'];
+        $collection = WishlistCollection::with('user' , 'user_eng_approve' , 'user_eng_proc')->find($collectionId);
+        if (!$collection) {
+            return abort(404);
+        }
+        $wishlist = Wishlist::whereIn('customer_id' , $this->getRelatedAccounts())->where('wishlist_collection_id' , $collectionId)->get();
+        $users =$this->getRelatedAccounts();
+
+        $data = [
+            'wishlist' => $wishlist,
+            'collection' => $collection,
+            'users' => $users,
+            'company_name' => getWebConfig(name: 'company_name'),
+            'company_email' => getWebConfig(name: 'company_email'),
+            'company_phone' => getWebConfig(name: 'company_phone'),
+            'company_web_logo' => getWebConfig(name: 'company_web_logo'),
+        ];
+        $mpdfView = FacadesView::make('web-views.users-profile.account-view-wishlist-collection-pdf', ['data'=>$data]);
+        Helpers::gen_mpdf($mpdfView, 'wishlist_collection_', $collection->name);
+
     }
 
     public function getRelatedAccounts()

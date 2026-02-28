@@ -258,6 +258,8 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
         Route::get('wishlists', 'wishlistCollections')->name('wishlists')->middleware('customer');
         Route::post('wishlist/update-quantity', [WebController::class, 'updateWishlistQuantity'])->name('wishlist.update-quantity');
         Route::get('/wishlist/get-quantity', [WebController::class, 'getQuantity'])->name('wishlist.get-quantity');
+        Route::get('export-wishlist-collection', 'exportWishlistCollection')->name('export-wishlist-collection')->middleware('customer');
+
 
 
 
