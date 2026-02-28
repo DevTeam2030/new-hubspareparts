@@ -30,6 +30,8 @@ class Wishlist extends Model
         'product_id',
         'quantity',
         'wishlist_collection_id',
+        'variation',
+        'variant',
     ];
 
     /**

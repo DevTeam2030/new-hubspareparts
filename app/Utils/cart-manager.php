@@ -397,6 +397,12 @@ class CartManager
             }
         }
 
+        // Handle wishlist variation/variant data
+        if ($request->has('variation') && $request['variation']) {
+            $string = $request['variation'];
+            $variations = json_decode($request['variation'] ?? '[]', true) ?: [];
+        }
+
         $cartArray = [
             'color' => $request['color'] ?? null,
             'product_id' => $product['id'],
@@ -577,6 +583,9 @@ class CartManager
         if ($request['variant_key'] && $digitalVariation) {
             $price = $digitalVariation['price'];
         }
+        
+        // Handle wishlist variant data for digital products
+        $variantKey = $request['variant_key'] ?? $request['variant'] ?? '';
         $user = Helpers::getCustomerInformation($request);
         $guestId = session('guest_id') ?? ($request->guest_id ?? 0);
 
@@ -597,7 +606,7 @@ class CartManager
             'digital_product_type' => $product['digital_product_type'],
             'choices' => json_encode([]),
             'variations' => json_encode([]),
-            'variant' => $request['variant_key'],
+            'variant' => $variantKey,
             'quantity' => $request['quantity'],
             'price' => $price,
             'tax' => $tax,

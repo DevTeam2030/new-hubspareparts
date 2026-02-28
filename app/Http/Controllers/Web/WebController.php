@@ -1116,6 +1116,9 @@ class WebController extends Controller
 
     public function storeWishlist(Request $request)
     {
+        // Debug logging
+        \Log::info('Wishlist request data:', $request->all());
+        
         $user = User::find(auth('customer')->id());
         if (!$user->hasPermissionTo('web-adddelete-products-to-wishlist')) {
             $countWishlist = Wishlist::whereHas('wishlistProduct', function ($q) {
@@ -1161,9 +1164,60 @@ class WebController extends Controller
         if ($request->ajax()) {
             if (auth('customer')->check()) {
 
+                // Generate variant string for comparison (same logic as creation)
+                $variations = [];
+                $string = '';
+                
+                \Log::info('Processing variation for product: ' . $request->product_id);
+                
+                // Handle color
+                if ($request->has('color') && $request->color) {
+                    $colorName = \App\Models\Color::where(['code' => $request->color])->first()->name ?? $request->color;
+                    $variations['color'] = $colorName;
+                    $string .= $colorName;
+                    \Log::info('Color found: ' . $colorName);
+                }
+                
+                // Handle choice options
+                $product = \App\Models\Product::find($request->product_id);
+                if ($product && $product->choice_options) {
+                    $choiceOptions = json_decode($product->choice_options, true);
+                    \Log::info('Choice options found:', $choiceOptions);
+                    foreach ($choiceOptions as $choice) {
+                        $choiceName = $choice['name'] ?? $choice['title'];
+                        $choiceValue = $request[$choiceName] ?? null;
+                        \Log::info('Processing choice: ' . $choiceName . ' with value: ' . $choiceValue);
+                        if ($choiceValue) {
+                            $variations[$choice['title']] = $choiceValue;
+                            if ($string != '') {
+                                $string .= '-' . str_replace(' ', '', $choiceValue);
+                            } else {
+                                $string .= str_replace(' ', '', $choiceValue);
+                            }
+                        }
+                    }
+                }
+                
+                // Handle variant_key for digital products
+                if ($request->has('variant_key') && $request->variant_key) {
+                    $string = str_replace(' ', '', $request->variant_key);
+                    \Log::info('Variant key found: ' . $request->variant_key);
+                }
+                
+                // Handle product_variation_code
+                if ($request->has('product_variation_code') && $request->product_variation_code) {
+                    $string = str_replace(' ', '', $request->product_variation_code);
+                    \Log::info('Product variation code found: ' . $request->product_variation_code);
+                }
+                
+                \Log::info('Final variations array:', $variations);
+                \Log::info('Final variant string: ' . $string);
+
                 $wishlist = Wishlist::where('customer_id', auth('customer')->id())
                     ->where('wishlist_collection_id' ,  $request->collection_id)
-                    ->where('product_id', $request->product_id)->first();
+                    ->where('product_id', $request->product_id)
+                    ->where('variant', $string)
+                    ->first();
                 if ($wishlist) {
                     //$wishlist->delete();
 
@@ -1189,6 +1243,59 @@ class WebController extends Controller
                     $wishlist->product_id = $request->product_id;
                     $wishlist->quantity = $request->quantity;
                     $wishlist->wishlist_collection_id = $request->collection_id;
+                    
+                    // Process variation data like CartManager
+                    $variations = [];
+                    $string = '';
+                    
+                    \Log::info('Creating wishlist item with variation data');
+                    \Log::info('Request data for creation:', $request->all());
+                    
+                    // Handle color
+                    if ($request->has('color') && $request->color) {
+                        $colorName = \App\Models\Color::where(['code' => $request->color])->first()->name ?? $request->color;
+                        $variations['color'] = $colorName;
+                        $string .= $colorName;
+                        \Log::info('Creation - Color found: ' . $colorName);
+                    }
+                    
+                    // Handle choice options
+                    $product = \App\Models\Product::find($request->product_id);
+                    if ($product && $product->choice_options) {
+                        $choiceOptions = json_decode($product->choice_options, true);
+                        \Log::info('Creation - Choice options found:', $choiceOptions);
+                        foreach ($choiceOptions as $choice) {
+                            $choiceName = $choice['name'] ?? $choice['title'];
+                            $choiceValue = $request[$choiceName] ?? null;
+                            \Log::info('Creation - Processing choice: ' . $choiceName . ' with value: ' . $choiceValue);
+                            if ($choiceValue) {
+                                $variations[$choice['title']] = $choiceValue;
+                                if ($string != '') {
+                                    $string .= '-' . str_replace(' ', '', $choiceValue);
+                                } else {
+                                    $string .= str_replace(' ', '', $choiceValue);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Handle variant_key for digital products
+                    if ($request->has('variant_key') && $request->variant_key) {
+                        $string = str_replace(' ', '', $request->variant_key);
+                        \Log::info('Creation - Variant key found: ' . $request->variant_key);
+                    }
+                    
+                    // Handle product_variation_code
+                    if ($request->has('product_variation_code') && $request->product_variation_code) {
+                        $string = str_replace(' ', '', $request->product_variation_code);
+                        \Log::info('Creation - Product variation code found: ' . $request->product_variation_code);
+                    }
+                    
+                    \Log::info('Creation - Final variations array:', $variations);
+                    \Log::info('Creation - Final variant string: ' . $string);
+                    
+                    $wishlist->variation = json_encode($variations);
+                    $wishlist->variant = $string;
                     $wishlist->save();
 
                     $countWishlist = Wishlist::whereHas('wishlistProduct', function ($q) {

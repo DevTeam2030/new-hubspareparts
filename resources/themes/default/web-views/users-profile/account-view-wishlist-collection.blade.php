@@ -37,6 +37,10 @@ fill="white"/>
             <i class="navbar-tool-icon czi-heart"></i>
             All Collections
         </a>
+        <a  href="{{route('export-wishlist-collection' , ['id' => $collection->id])}}"  class="btn btn--primary text-capitalize btn-sm d-flex align-items-center gap-1" >
+            <i class="navbar-tool-icon czi-download"></i>
+            export pdf
+        </a>
         <div class="d-flex justify-content-end d-lg-none">
             <button class="profile-aside-btn btn btn--primary px-2 rounded px-2 py-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
@@ -223,6 +227,16 @@ src="{{ getStorageImages(path: $product->thumbnail_full_url, type: 'product') }}
 $unitPrice = $product->unit_price;
 $itemTotal = $unitPrice * $item->quantity;
 $totalPrice += $itemTotal;
+
+// Handle variation data for HTML attributes
+$variationData = $item->variation;
+if (is_string($variationData)) {
+    $decodedVariation = json_decode($variationData);
+    if (json_last_error() === JSON_ERROR_NONE && is_array($decodedVariation) && isset($decodedVariation[0])) {
+        $variationData = $decodedVariation[0]->type ?? $variationData;
+    }
+}
+
 @endphp
 </td>
 <td class="px-4-custome py-2">
@@ -259,6 +273,8 @@ class="ff-jost remove-wishlist px-3 btn btn-danger {{(!$user->hasPermissionTo('w
 @if($user->hasPermissionTo('web-export-to-cart'))
 <a data-label="Move" data-type="tr"
 data-product_hash_id="{{ $product->id }}" href="#1"  data-product-quantity="{{ $item->quantity }}"
+data-variation="{{ $variationData ?? '' }}"
+data-variant="{{ $item->variant ?? '' }}"
 class="ff-jost move-cart px-3 btn btn-info">
 <span class="icon-close text-light">
 <i class="czi-cart"></i>
@@ -267,7 +283,10 @@ class="ff-jost move-cart px-3 btn btn-info">
 </a>
 @else
 <a data-label="Move" data-type="tr" href="#1"
-data-product_hash_id="{{ $product->id }}" class="ff-jost move-cart  px-3 btn btn-info disabled">
+data-product_hash_id="{{ $product->id }}"
+data-variation="{{ $variationData ?? '' }}"
+data-variant="{{ $item->variant ?? '' }}"
+class="ff-jost move-cart  px-3 btn btn-info disabled">
 <span class="icon-close text-light">
 <i class="czi-cart"></i>
 </span>
@@ -288,7 +307,11 @@ data-product_hash_id="{{ $product->id }}" class="ff-jost move-cart  px-3 btn btn
 </span>
 </a>
 @else
-<a  data-type="tr"  data-product_hash_id="{{ $product->id }}" class="ff-jost move-cart px-3 btn btn-info disabled" data-product-quantity="{{ $item->quantity }}>
+<a  data-type="tr"  data-product_hash_id="{{ $product->id }}" class="ff-jost move-cart px-3 btn btn-info disabled"
+    data-product-quantity="{{ $item->quantity }}"
+    data-variation="{{ $variationData ?? '' }}"
+    data-variant="{{ $item->variant ?? '' }}"
+>
 <span class="icon-close text-light">
 <i class="las la-shopping-cart"> <i class="czi-cart"></i></i>
 </span>
@@ -446,18 +469,20 @@ $('.select-item:checked').each(function() {
     let row = $(this).closest('tr');
     let productId = row.find('.move-cart').data('product_hash_id');
     let quantity  = parseInt(row.find('.cart-qty-field').val()); // ✅ Get from input
-    items.push({id: productId, quantity: quantity , collection_id : collectionId});
-// ✅ Get from input instead
-items.push({id: productId, quantity: quantity , collection_id : collectionId});
+    let variation = row.find('.move-cart').data('variation') || '';
+    let variant = row.find('.move-cart').data('variant') || '';
+    items.push({id: productId, quantity: quantity, variation: variation, variant: variant, collection_id : collectionId});
 });
 } else {
 // all items
 $('.move-cart').each(function() {
     let row = $(this).closest('tr');
 let productId = $(this).data('product_hash_id');
+let variation = $(this).data('variation') || '';
+let variant = $(this).data('variant') || '';
 //let quantity  = $(this).data('product-quantity');
 let quantity  = parseInt(row.find('.cart-qty-field').val());
-items.push({id: productId, quantity: quantity , collection_id : collectionId});
+items.push({id: productId, quantity: quantity, variation: variation, variant: variant, collection_id : collectionId});
 });
 }
 
@@ -473,7 +498,9 @@ type: "POST",
 data: {
 id: item.id,
 quantity: item.quantity,   // ✅ send quantity
- collection_id : collectionId,
+collection_id : collectionId,
+variation: item.variation || '',
+variant: item.variant || '',
 _token: "{{ csrf_token() }}"
 },
 success: function(response) {
@@ -507,6 +534,8 @@ let data = {
 id: rowId,
 quantity : quantity,
 collection_id : collectionId,
+variation : $this.data('variation') || '',
+variant : $this.data('variant') || '',
 _token: "{{ csrf_token() }}"
 };
 if (!userCanConfirm) {

@@ -9364,4 +9364,9 @@ return [
 	"NO_Contacts" => "NO Contacts",
 	"No.Of_Poles" => "No.Of Poles",
 	"Control_Voltage" => "Control Voltage",
+	"all_copy_right_reserved_©_2026_" => "All copy right reserved © 2026 ",
+	"reference_number" => "Reference number",
+	"search_by_reference_number" => "Search by reference number",
+	"shelf_number" => "Shelf number",
+	"search_by_shelf_number" => "Search by shelf number",
 ];
