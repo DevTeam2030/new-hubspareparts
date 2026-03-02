@@ -424,6 +424,17 @@
                                                 </div>
                                             </div>
                                         </button>
+
+                                        <button type="button" data-product-id="{{ $product['id'] }}" class="btn __text-18px border product-action-add-compare">
+                                            <i class="fa {{($compareList > 0?'fa-retweet':'fa-retweet')}} compare_icon_{{$product['id']}} web-text-primary"
+                                               aria-hidden="true"></i>
+                                            <div class="compare-tooltip" x-placement="top">
+                                                <div class="arrow"></div><div class="inner">
+                                                    <span class="add">{{translate('added_to_compare')}}</span>
+                                                    <span class="remove">Removed</span>
+                                                </div>
+                                            </div>
+                                        </button>
                                         @endif
                                         @if(($product->added_by == 'seller' && ($sellerTemporaryClose || (isset($product->seller->shop) && $product->seller->shop->vacation_status && $currentDate >= $sellerVacationStartDate && $currentDate <= $sellerVacationEndDate))) ||
                                          ($product->added_by == 'admin' && ($inHouseTemporaryClose || ($inHouseVacationStatus && $currentDate >= $inHouseVacationStartDate && $currentDate <= $inHouseVacationEndDate))))
@@ -940,11 +951,13 @@
     @include('layouts.front-end.partials.modal._chatting',['seller'=>$product->seller, 'user_type'=>$product->added_by])
 
     <span id="route-review-list-product" data-url="{{ route('review-list-product') }}"></span>
+    <span id="route-product-compare-add" data-url="{{ route('product-compare.add') }}"></span>
     <span id="products-details-page-data" data-id="{{ $product['id'] }}"></span>
 @endsection
 
 @push('script')
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/product-details.js') }}"></script>
+{{--    <script src="{{ asset('assets/front-end/js/custom.js') }}"></script>--}}
     <script type="text/javascript" async="async"
             src="https://platform-api.sharethis.com/js/sharethis.js#property=5f55f75bde227f0012147049&product=sticky-share-buttons"></script>
 

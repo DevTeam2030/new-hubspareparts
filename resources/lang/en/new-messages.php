@@ -9378,4 +9378,6 @@ return [
 	"The_file_must_be_an_Excel_file_of_type_xlsx" => "The file must be an Excel file of type xlsx",
 	"The_uploaded_item_must_be_a_valid_file" => "The uploaded item must be a valid file",
 	"Please_upload_an_Excel_file_of_type_xlsx" => "Please upload an Excel file of type xlsx",
+	"no_products_in_compare_list" => "No products in compare list",
+	"added_to_compare" => "Added to compare",
 ];

@@ -904,14 +904,14 @@ function addWishlist(product_id, collectionId = null, quantity = 1, modalId = nu
     $.ajaxSetup({
         headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
     });
-    
+
     // Prepare data object
     let data = {
         product_id: product_id,
         collection_id: collectionId,
         quantity: quantity
     };
-    
+
     // If form data is provided, extract variation and variant information
     if (formData) {
         console.log('Form data captured:', formData);
@@ -933,7 +933,7 @@ function addWishlist(product_id, collectionId = null, quantity = 1, modalId = nu
         });
         console.log('Final data being sent:', data);
     }
-    
+
     $.ajax({
         url: $("#route-store-wishlist").data("url"),
         method: "POST",
@@ -1022,6 +1022,113 @@ function addWishlist(product_id, collectionId = null, quantity = 1, modalId = nu
         },
     });
 }
+
+
+function addCompare(product_id, quantity = 1, modalId = null, formData = null) {
+    $.ajaxSetup({
+        headers: {"X-CSRF-TOKEN": $('meta[name="_token"]').attr("content")},
+    });
+
+    // Prepare data object
+    let data = {
+        product_id: product_id,
+        quantity: quantity
+    };
+
+    // If form data is provided, extract variation and variant information
+    if (formData) {
+        console.log('Form data captured:', formData);
+        formData.forEach(function(item) {
+            console.log('Processing item:', item.name, item.value);
+            if (item.name === 'product_variation_code' && item.value) {
+                data.variation = item.value;
+            }
+            if (item.name === 'variant_key' && item.value) {
+                data.variant = item.value;
+            }
+            if (item.name === 'color' && item.value) {
+                data.color = item.value;
+            }
+            // Capture all choice option fields
+            if (item.name !== 'product_id' && item.name !== 'quantity' && item.name !== '_token' && item.name !== 'collection_id') {
+                data[item.name] = item.value;
+            }
+        });
+        console.log('Final data being sent:', data);
+    }
+
+    $.ajax({
+        url: $("#route-product-compare-add").data("url"),
+        method: "POST",
+        data: data,
+        success: function (data) {
+            if (data.status == 1) {
+                // Update compare count if needed
+                if (data.count !== undefined) {
+                    $(".countCompare").html(data.count);
+                }
+                $(".tooltip").html("");
+                $(`.compare_icon_${product_id}`)
+                    .removeClass("fa-balance-scale-o")
+                    .addClass("fa-balance-scale");
+                $(".compare-tooltip").find(".remove").hide();
+                $(".compare-tooltip").find(".permission").hide();
+                $(".compare-tooltip").find(".add").show();
+                $(".compare-tooltip").show();
+                const timer = setTimeout(() => {
+                    $(".compare-tooltip").hide();
+                }, 2000);
+                // Show success message
+                if (data.message) {
+                    responseManager({status: 1, message: data.message});
+                }
+                return () => clearTimeout(timer);
+            } else if (data.status == 0) {
+                $(".compare-tooltip").find(".remove").show();
+                $(".compare-tooltip").find(".permission").hide();
+                $(".compare-tooltip").find(".add").hide();
+                $(".compare-tooltip").show();
+                const timer = setTimeout(() => {
+                    $(".compare-tooltip").hide();
+                }, 2000);
+                // Update compare count if needed
+                if (data.count !== undefined) {
+                    $(".countCompare").html(data.count);
+                }
+                $(`.compare_icon_${product_id}`)
+                    .removeClass("fa-balance-scale")
+                    .addClass("fa-balance-scale-o");
+                // Show message
+                if (data.message) {
+                    responseManager({status: 0, message: data.message});
+                }
+                return () => clearTimeout(timer);
+            }
+            else if (data.status == 2) {
+                $(".compare-tooltip").find(".permission").show();
+                $(".compare-tooltip").find(".add").hide();
+                $(".compare-tooltip").find(".remove").hide();
+                $(".compare-tooltip").show();
+                const timer = setTimeout(() => {
+                    $(".compare-tooltip").hide();
+                }, 2000);
+                // Show message
+                if (data.message) {
+                    responseManager({status: 0, message: data.message});
+                }
+                return () => clearTimeout(timer);
+            }
+            else {
+                //$("#login-alert-modal").modal("show");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error adding to compare:', error);
+            responseManager({status: 0, message: 'Error adding product to compare'});
+        }
+    });
+}
+
 
 $(".function-remove-wishList").on("click", function () {
     let productId = $(this).data("id");
@@ -1306,6 +1413,14 @@ function commonFunctionalityForProductView() {
         } else {
             $("#login-alert-modal").modal("show");
         }
+    });
+
+    $(".product-action-add-compare").on("click", function () {
+
+        let id = $(this).data("product-id");
+        let formSelector = ".add-to-compare-details-form";
+        let formData = $(formSelector).serializeArray();
+        addCompare(id, null, formData);
     });
 
     function getRequestForProductRestock(formElement) {
