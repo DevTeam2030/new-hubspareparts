@@ -139,16 +139,21 @@
                         </a>
                     </div>
                     <div class="navbar-tool dropdown d-none d-md-block {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
+                        <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('product-compare.index')}}">
+                            <i class="navbar-tool-icon fa fa-retweet"></i>
+                        </a>
+                    </div>
+                    <div class="navbar-tool dropdown d-none d-md-block {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
                         <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('wishlists')}}">
-{{--                            <span class="navbar-tool-label">--}}
-{{--                                <span class="countWishlist">--}}
-{{--                                    {{session()->has('wish_list')?count(session('wish_list')):0}}--}}
-{{--                                </span>--}}
-{{--                           </span>--}}
+                            {{--                            <span class="navbar-tool-label">--}}
+                            {{--                                <span class="countWishlist">--}}
+                            {{--                                    {{session()->has('wish_list')?count(session('wish_list')):0}}--}}
+                            {{--                                </span>--}}
+                            {{--                           </span>--}}
                             <i class="navbar-tool-icon czi-heart"></i>
                         </a>
                     </div>
-                    @if(auth('customer')->check())
+                @if(auth('customer')->check())
                         <div class="dropdown">
                             <a class="navbar-tool ml-3" type="button" data-toggle="dropdown" aria-haspopup="true"
                                aria-expanded="false">

@@ -9365,4 +9365,6 @@ return [
 	"NO_Contacts" => "NO Contacts",
 	"No.Of_Poles" => "No.Of Poles",
 	"Control_Voltage" => "Control Voltage",
+	"no_products_in_compare_list" => "No products in compare list",
+	"added_to_compare" => "Added to compare",
 ];

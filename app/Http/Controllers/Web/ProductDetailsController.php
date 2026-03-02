@@ -73,6 +73,7 @@ class ProductDetailsController extends Controller
 
             $overallRating = getOverallRating(reviews: $product->reviews);
             $wishlistStatus = $this->wishlistRepo->getListWhereCount(filters: ['product_id' => $product['id'], 'customer_id' => auth('customer')->id()]);
+            $compareList = $this->compareRepo->getCount(params: ['product_id' => $product->id, 'customer_id' => auth('customer')->id()]);
             $productReviews = $this->reviewRepo->getListWhere(
                 orderBy: ['id' => 'desc'],
                 filters: ['product_id' => $product['id']],
@@ -143,7 +144,7 @@ class ProductDetailsController extends Controller
             return view(VIEW_FILE_NAMES['products_details'], compact('product', 'countWishlist', 'countOrder', 'relatedProducts',
                 'dealOfTheDay', 'currentDate', 'sellerVacationStartDate', 'sellerVacationEndDate', 'sellerTemporaryClose',
                 'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose', 'overallRating',
-                'wishlistStatus', 'productReviews', 'rating', 'totalReviews', 'productsForReview', 'moreProductFromSeller', 'decimalPointSettings', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta' , 'relatedAccounts'));
+                'wishlistStatus', 'productReviews', 'rating', 'totalReviews', 'productsForReview', 'moreProductFromSeller', 'decimalPointSettings', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta', 'compareList' , 'relatedAccounts'));
         }
 
         Toastr::error(translate('not_found'));
@@ -461,7 +462,7 @@ class ProductDetailsController extends Controller
 
             return view(VIEW_FILE_NAMES['products_details'], compact('product', 'wishlistStatus', 'countWishlist',
                 'relatedProducts', 'currentDate', 'sellerVacationStartDate', 'sellerVacationEndDate', 'rattingStatus', 'productsLatest',
-                'sellerTemporaryClose', 'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose', 'positiveReview', 'overallRating', 'decimalPointSettings', 'moreProductFromSeller', 'productsForReview', 'productsCount', 'totalReviews', 'rating', 'productReviews', 'avgRating', 'topRatedShops', 'newSellers', 'deliveryInfo', 'productsTopRated', 'productsThisStoreTopRated', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta'));
+                'sellerTemporaryClose', 'inHouseVacationStartDate', 'inHouseVacationEndDate', 'inHouseVacationStatus', 'inHouseTemporaryClose', 'positiveReview', 'overallRating', 'decimalPointSettings', 'moreProductFromSeller', 'productsForReview', 'productsCount', 'totalReviews', 'rating', 'productReviews', 'avgRating', 'topRatedShops', 'newSellers', 'deliveryInfo', 'productsTopRated', 'productsThisStoreTopRated', 'previewFileInfo', 'productAuthorsInfo', 'productPublishingHouseInfo', 'firstVariationQuantity', 'productDetailsMeta', 'compareList'));
         }
 
         Toastr::error(translate('not_found'));

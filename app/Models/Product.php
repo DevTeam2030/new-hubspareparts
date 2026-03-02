@@ -209,7 +209,7 @@ class Product extends Model
             ->where(['status' => 1])
             ->where(['request_status' => 1])
             ->SellerApproved()
-            ->whereIn('product_type', $productType);
+            ->whereIn('product_type', $productType)->limit(10);
     }
 
     public function scopeSellerApproved($query): void

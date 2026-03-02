@@ -82,9 +82,11 @@ Route::group(['namespace' => 'Web', 'middleware' => ['maintenance_mode', 'guestC
     Route::group(['prefix' => 'product-compare', 'as' => 'product-compare.'], function () {
         Route::controller(ProductCompareController::class)->group(function () {
             Route::get(ProductCompare::INDEX[URI], 'index')->name('index');
-            Route::post(ProductCompare::INDEX[URI], 'add');
-            Route::get(ProductCompare::DELETE[URI], 'delete')->name('delete');
+            Route::post(ProductCompare::INDEX[URI], 'add')->name('add');
+            Route::post(ProductCompare::DELETE[URI], 'delete')->name('delete');
             Route::get(ProductCompare::DELETE_ALL[URI], 'deleteAllCompareProduct')->name('delete-all');
+            Route::post('count', 'getCompareCount')->name('count');
+            Route::post('check', 'checkCompare')->name('check');
         });
     });
     Route::post(ShopFollower::SHOP_FOLLOW[URI], [ShopFollowerController::class, 'followOrUnfollowShop'])->name('shop-follow');

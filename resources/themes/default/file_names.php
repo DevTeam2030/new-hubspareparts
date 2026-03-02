@@ -33,7 +33,7 @@ return [
     'user_coupons' => 'web-views.users-profile.coupons',
     'tracking-page' => 'web-views.order.tracking-page',
     'track_order' => 'web-views.order.tracking',
-    'account_compare_list' => '',
+    'account_compare_list' => 'web-views.users-profile.account-compare-list',
     'account_wishlist_partials' => 'web-views.partials._wish-list-data',
     'seller_registration' => 'web-views.seller-view.auth.register',
     'all_stores_page' => 'web-views.seller-view.sellers',
