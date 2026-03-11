@@ -160,6 +160,26 @@ class ProductImport implements ToCollection, WithHeadingRow
                     'updated_at' => now(),
                 ];
 
+                // In bulk update, if product has variations, keep each variation price and stock in sync with unit price and current stock
+                if ($isUpdate && !empty($existingProduct->variation)) {
+                    $variations = json_decode($existingProduct->variation, true);
+
+                    if (is_array($variations) && count($variations) > 0) {
+                        foreach ($variations as &$variation) {
+                            if (isset($variation['price'])) {
+                                $variation['price'] = $data['unit_price'];
+                            }
+                            if (array_key_exists('qty', $variation)) {
+                                $variation['qty'] = $data['current_stock'];
+                            }
+                        }
+
+                        $data['variation'] = json_encode($variations);
+                        // When product has variations, set product current stock to the sum of all variation qtys
+                        $data['current_stock'] = (int) array_sum(array_column($variations, 'qty'));
+                    }
+                }
+
                 // Only add slug and created_at for new products
                 if (!$isUpdate) {
                     $data['slug'] = $slug;
