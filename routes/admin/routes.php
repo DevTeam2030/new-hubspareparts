@@ -12,6 +12,10 @@ use App\Enums\ViewPaths\Admin\Banner;
 use App\Enums\ViewPaths\Admin\Coupon;
 use App\Enums\ViewPaths\Admin\Review;
 use App\Enums\ViewPaths\Admin\Vendor;
+use App\Http\Controllers\Admin\Blog\BlogCategoryController;
+use App\Http\Controllers\Admin\Blog\BlogController;
+use App\Http\Controllers\Admin\Blog\BlogDownloadAppController;
+use App\Http\Controllers\Admin\Blog\BlogPrioritySetupController;
 use App\Http\Controllers\Admin\DeliveryTimeController;
 use App\Http\Controllers\Admin\Location\AreaController;
 use App\Http\Controllers\Admin\Location\GovernorateController;
@@ -268,7 +272,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             Route::get(Product::DELETE_IMAGE[URI], 'deleteImage')->name('delete-image');
             Route::get(Product::GET_VARIATIONS[URI], 'getVariations')->name('get-variations');
             Route::post(Product::UPDATE_QUANTITY[URI], 'updateQuantity')->name('update-quantity');
-            
+
             // New Bulk Import
             Route::get(Product::BULK_IMPORT[DOWNLOAD_EXCEL_IMPORT_TEMPLATE_URI], 'downloadExcelImportTemplate')->name('download-excel-import-template');
             Route::get(Product::BULK_IMPORT[URI], 'getNewBulkImportView')->name('bulk-import');
@@ -1231,6 +1235,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
             });
         });
 
+
+
         //       // get the times and notes for governorate
 //        Route::get('delivery-times/by-governorate', [DeliveryTimeController::class, 'getTimesByGovernorate'])
 //            ->name('delivery-times.by-governorate');
@@ -1238,6 +1244,55 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['admin']],
 //        // get the shipping cost
 //        Route::get('areas/calculate-shipping', [AreaController::class, 'calculateShipping'])
 //            ->name('areas.calculate-shipping');
+    });
+
+    Route::group(['prefix' => 'blog', 'as' => 'blog.'], function () {
+
+        Route::controller(BlogCategoryController::class)->group(function () {
+            Route::group(['prefix' => 'category', 'as' => 'category.'], function () {
+                Route::get('list', 'getList')->name('list');
+                Route::get('add', 'getAddView')->name('add-view');
+                Route::post('add', 'add')->name('add');
+                Route::get('edit/{id}', 'getUpdateView')->name('edit');
+                Route::post('update', 'update')->name('update');
+                Route::post('category-info', 'getCategoryInfo')->name('info');
+                Route::post('delete', 'deleteCategory')->name('delete');
+                Route::post('status-update', 'updateStatus')->name('status-update');
+                Route::post('search', 'search')->name('search');
+                Route::get('dropdown', 'getDropdown')->name('dropdown');
+            });
+        });
+
+        Route::controller(BlogController::class)->group(function () {
+            Route::get('view', 'index')->name('view');
+            Route::post('intro', 'updateIntro')->name('intro');
+            Route::get('add', 'getAddView')->name('add');
+            Route::post('add', 'addBlog')->name('store');
+            Route::get('edit', 'getUpdateView')->name('edit');
+            Route::put('update', 'update')->name('update');
+            Route::post('status-update', 'updateStatus')->name('status-update');
+            Route::post('blog-status-update'. '/{id}', 'updateBlogStatus')->name('blog-status-update');
+            Route::get('draft-edit' . '/{id}', 'draftEdit')->name('draft-edit');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('section-view', 'sectionView')->name('section-view');
+            Route::post('title-auto-fill', 'titleAutoFill')->name('title-auto-fill');
+            Route::post('description-auto-fill', 'descriptionAutoFill')->name('description-auto-fill');
+            Route::post('seo-section-auto-fill', 'seoSectionAutoFill')->name('seo-section-auto-fill');
+        });
+
+        Route::controller(BlogDownloadAppController::class)->group(function () {
+            Route::get('app-download-setup', 'appDownloadSetup')->name('app-download-setup');
+            Route::post('app-download-setup', 'updateDownloadAppButton');
+            Route::post('app-download-setup-status', 'updateStatus')->name('app-download-setup-status');
+            Route::post('delete-image', 'deleteImage')->name('delete-image');
+        });
+
+        Route::group(['prefix' => 'priority-setup', 'as' => 'priority-setup.'], function () {
+            Route::controller(BlogPrioritySetupController::class)->group(function () {
+                Route::get('', 'index')->name('index');
+                Route::post('', 'update');
+            });
+        });
     });
 
     Route::get('category/get-sub-category', [AdminAjaxActionController::class, 'get_sub_category'])->name('get-sub-category');

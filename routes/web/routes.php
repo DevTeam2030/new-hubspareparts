@@ -47,7 +47,8 @@ use App\Http\Controllers\Payment_Methods\MercadoPagoController;
 use App\Http\Controllers\Payment_Methods\BkashPaymentController;
 use App\Http\Controllers\Payment_Methods\PaystackController;
 use Illuminate\Support\Facades\Artisan;
-
+use App\Http\Controllers\Web\FrontendBlogController;
+use App\Http\Middleware\BlogActiveStatusMiddleware;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -555,5 +556,21 @@ if (!$isGatewayPublished) {
     // get the shipping cost
     Route::get('areas/calculate-shipping', [AreaController::class, 'calculateShipping'])
         ->name('areas.calculate-shipping');
+
+    Route::middleware(BlogActiveStatusMiddleware::class)->group(function () {
+        Route::controller(FrontendBlogController::class)->group(function () {
+            Route::get('/blog', 'index')->name('frontend.blog.index');
+            Route::get('/popular-blog', 'getPopularBlogs')->name('frontend.blog.popular-blog');
+            Route::get('/blog/{slug}', 'getDetailsView')->name('frontend.blog.details');
+        });
+
+        Route::prefix('app')->group(function () {
+            Route::controller(FrontendBlogController::class)->group(function () {
+                Route::get('/blog', 'index')->name('app.blog.index');
+                Route::get('/popular-blog', 'getPopularBlogs')->name('app.blog.popular-blog');
+                Route::get('/blog/{slug}', 'getDetailsView')->name('app.blog.details');
+            });
+        });
+    });
 
 }

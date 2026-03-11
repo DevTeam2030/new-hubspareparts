@@ -82,4 +82,12 @@ return [
     'wishlist_collections_add' => 'web-views.users-profile.wishlist-collection-add',
     'account_edit_user' => 'web-views.users-profile.account-user-edit',
     'wishlist_collections_edit' => 'web-views.users-profile.wishlist-collection-edit',
+
+    'frontend_blog_list' => 'web-views.blogs.index',
+    'frontend_blog_details_view' => 'web-views.blogs.details',
+    'frontend_app_blog_list' => 'web-views.blogs.app.index',
+    'frontend_app_blog_details_view' => 'web-views.blogs.details',
+    'frontend_popular_blogs_view' => 'web-views.blogs.index-popular',
+    'blog_seo_meta_content_partials' => 'web-views.partials._blogSEOMetaContentData',
+
 ];

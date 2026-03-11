@@ -994,6 +994,38 @@
                                 </a>
                             </li>
                         @endif
+                        @if(Helpers::module_permission_check('blog_management'))
+                            <li class="nav-item {{Request::is('admin/blog*')?'scroll-here':''}}">
+                                <small class="nav-subtitle" title="">{{translate('blog_management')}}</small>
+                                <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                            </li>
+                            <li class="navbar-vertical-aside-has-menu {{Request::is('admin/blog*')?'active':''}}">
+                                <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                                   href="javascript:" title="{{translate('blog')}}">
+                                    <i class="tio-blog nav-icon"></i>
+                                    <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                        {{translate('blog')}}
+                                    </span>
+                                </a>
+                                <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                                    style="display: {{Request::is('admin/blog*')?'block':'none'}}">
+                                    <li class="nav-item {{Request::is('admin/blog/category*')?'active':''}}">
+                                        <a class="nav-link" href="{{route('admin.blog.category.list')}}"
+                                           title="{{translate('categories')}}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">{{translate('categories')}}</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item {{Request::is('admin/blog/view')?'active':''}}">
+                                        <a class="nav-link" href="{{route('admin.blog.view')}}"
+                                           title="{{translate('blog_posts')}}">
+                                            <span class="tio-circle nav-indicator-icon"></span>
+                                            <span class="text-truncate">{{translate('blog_posts')}}</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
                         @if(Helpers::module_permission_check('system_settings'))
                             <li class="nav-item {{(
                                 Request::is('admin/business-settings/web-config') ||

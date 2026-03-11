@@ -74,4 +74,11 @@ return [
     'product_shipping_method_modal_view_partials' => 'theme-views.layouts.partials.modal._buy-now-data',
     'robots_meta_content_partials' => 'theme-views.partials._robotsMetaContentData',
     'product_seo_meta_content_partials' => 'theme-views.partials._productSEOMetaContentData',
+
+    'frontend_blog_list' => 'web-views.blogs.index',
+    'frontend_blog_details_view' => 'web-views.blogs.details',
+    'frontend_app_blog_list' => 'web-views.blogs.app.index',
+    'frontend_app_blog_details_view' => 'web-views.blogs.details',
+    'frontend_popular_blogs_view' => 'web-views.blogs.index-popular',
+    'blog_seo_meta_content_partials' => 'web-views.partials._blogSEOMetaContentData',
 ];

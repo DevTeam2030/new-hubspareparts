@@ -133,4 +133,22 @@ class PrioritySetupService
             'temporary_close_sorting' => $request['temporary_close_sorting'] ?? null,
         ];
     }
+
+    public function updateBlogCategoryPrioritySetupData($request): array
+    {
+        return [
+            'default_sorting_status' => $request['default_sorting_status'] ?? 0,
+            'custom_sorting_status' => $request['custom_sorting_status'] ?? 0,
+            'sort_by' => $request['sort_by'] ?? null,
+        ];
+    }
+
+    public function updateBlogPrioritySetupData($request): array
+    {
+        return [
+            'default_sorting_status' => $request['default_sorting_status'] ?? 0,
+            'custom_sorting_status' => $request['custom_sorting_status'] ?? 0,
+            'sort_by' => $request['sort_by'] ?? null,
+        ];
+    }
 }

@@ -557,6 +557,10 @@
                                 </li>
                             @endif
                         @endif
+
+                        <li class="nav-item dropdown d-none d-md-block {{request()->is('/')?'active':''}}">
+                            <a class="nav-link" href="{{route('frontend.blog.index')}}">{{ translate('blog')}}</a>
+                        </li>
                     </ul>
                     @if(auth('customer')->check())
                         <div class="logout-btn mt-auto d-md-none">
