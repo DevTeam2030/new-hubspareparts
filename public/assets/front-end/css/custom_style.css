@@ -11,7 +11,7 @@
       z-index: 999;
     }
 
-     
+
     .popup {
        background: #fff;
     padding: 50px 60px;
@@ -37,12 +37,12 @@
     border-radius: 5px;
     font-size: 14px;
 }
-     
+
     #alert:target {
       display: flex;
     }
-    
-    
+
+
 
 
  .card-header-custom:not(.collapsed) {
@@ -70,7 +70,11 @@
     margin-left: 10px;
 }
 
-
- 
- 
-
+  .__text-12px {
+      border: 1px solid #ddd;
+      padding: 4px 12px;
+      border-radius: 4px;
+      background-color: white;
+      display: inline-block;
+      margin: 0 2px;
+  }

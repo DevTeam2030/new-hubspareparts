@@ -282,7 +282,9 @@
 
                                         {{-- Card Body --}}
                                         <div class="compare-card__body">
-                                            <div class="compare-card__name">{{ $compareList->product->name }}</div>
+                                            <div class="compare-card__name">
+                                                <a href="{{route('product', $compareList->product?->slug)}}" target="_blank"> {{ $compareList->product->name }} </a>
+                                            </div>
                                             <div class="compare-card__price">
                                                 {{ webCurrencyConverter(amount: $compareList->product->unit_price) }}
                                             </div>

@@ -295,12 +295,12 @@
                                                     @foreach ($choice->options as $index => $option)
                                                         <div class="user-select-none">
                                                             <div class="for-mobile-capacity">
-                                                                <input type="radio"
-                                                                       id="{{ str_replace(' ', '', ($choice->name. '-'. $option)) }}"
-                                                                       name="{{ $choice->name }}" value="{{ $option }}"
-                                                                       @if($index == 0) checked @endif >
-                                                                <label class="__text-12px"
-                                                                       for="{{ str_replace(' ', '', ($choice->name. '-'. $option)) }}">{{ $option }}</label>
+{{--                                                                <input type="radio"--}}
+{{--                                                                       id="{{ str_replace(' ', '', ($choice->name. '-'. $option)) }}"--}}
+{{--                                                                       name="{{ $choice->name }}" value="{{ $option }}"--}}
+{{--                                                                       @if($index == 0) checked @endif >--}}
+                                                                <span  class="__text-12px "
+                                                                       for="{{ str_replace(' ', '', ($choice->name. '-'. $option)) }}">{{ $option }}</span>
                                                             </div>
                                                         </div>
                                                     @endforeach
