@@ -186,6 +186,22 @@ class ProductRepository implements ProductRepositoryInterface
             return $query->where('reference_number', 'like', '%'.$filters['reference_number'].'%');
         })->when(isset($filters['shelf_number']) && !empty($filters['shelf_number']), function ($query) use ($filters) {
             return $query->where('shelf_number', 'like', '%'.$filters['shelf_number'].'%');
+        })
+            ->when(isset($filters['sku']) && !empty($filters['sku']), function ($query) use ($filters) {
+            return $query->whereHas('stocks', function ($stockQuery) use ($filters) {
+                $stockQuery->where('sku', 'like', '%'.$filters['sku'].'%');
+            });
+        })
+            ->when(isset($filters['from_price']) && !empty($filters['from_price']), function ($query) use ($filters) {
+            return $query->where('unit_price', '>=', (float)$filters['from_price']);
+        })->when(isset($filters['to_price']) && !empty($filters['to_price']), function ($query) use ($filters) {
+            return $query->where('unit_price', '<=', (float)$filters['to_price']);
+        })->when(isset($filters['from_date']) && !empty($filters['from_date']), function ($query) use ($filters) {
+            return $query->whereDate('created_at', '>=', $filters['from_date']);
+        })->when(isset($filters['to_date']) && !empty($filters['to_date']), function ($query) use ($filters) {
+            return $query->whereDate('created_at', '<=', $filters['to_date']);
+        })->when(isset($filters['inventory_warning']) && $filters['inventory_warning'] == '1', function ($query) use ($filters) {
+            return $query->where('current_stock', '<=', 10);
         })->when(isset($filters['is_shipping_cost_updated']), function ($query) use ($filters) {
             return $query->where(['is_shipping_cost_updated' => $filters['is_shipping_cost_updated']]);
         })->when(isset($filters['status']), function ($query) use ($filters) {

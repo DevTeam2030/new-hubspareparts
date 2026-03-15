@@ -25,7 +25,7 @@
                         <div class="col-12">
                             <h4 class="mb-3">{{ translate('filter_Products') }}</h4>
                         </div>
-                        @if (request('type') == 'seller')
+
                             <div class="col-sm-6 col-lg-4 col-xl-3">
                                 <div class="form-group">
                                     <label class="title-color" for="store">{{ translate('store') }}</label>
@@ -39,7 +39,16 @@
                                     </select>
                                 </div>
                             </div>
-                        @endif
+
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color" for="store">{{ translate('sku') }}</label>
+                                <input type="text" name="sku" class="form-control"
+                                       value="{{ request('sku') }}"
+                                       placeholder="{{ translate('search_sku') }}">
+                            </div>
+                        </div>
+
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group">
                                 <label class="title-color" for="store">{{ translate('brand') }}</label>
@@ -95,20 +104,81 @@
                         </div>
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group">
+                                <label for="from_price" class="title-color">{{ translate('from_price') }}</label>
+                                <input type="number" name="from_price" class="form-control"
+                                       value="{{ request('from_price') }}"
+                                       placeholder="{{ translate('from_price') }}"
+                                       step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="to_price" class="title-color">{{ translate('to_price') }}</label>
+                                <input type="number" name="to_price" class="form-control"
+                                       value="{{ request('to_price') }}"
+                                       placeholder="{{ translate('to_price') }}"
+                                       step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="from_date" class="title-color">{{ translate('from_date') }}</label>
+                                <input type="date" name="from_date" class="form-control"
+                                       value="{{ request('from_date') }}"
+                                       placeholder="{{ translate('from_date') }}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="to_date" class="title-color">{{ translate('to_date') }}</label>
+                                <input type="date" name="to_date" class="form-control"
+                                       value="{{ request('to_date') }}"
+                                       placeholder="{{ translate('to_date') }}">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
                                 <label for="reference_number" class="title-color">{{ translate('reference_number') }}</label>
-                                <input type="text" name="reference_number" class="form-control" 
-                                       value="{{ request('reference_number') }}" 
+                                <input type="text" name="reference_number" class="form-control"
+                                       value="{{ request('reference_number') }}"
                                        placeholder="{{ translate('search_by_reference_number') }}">
                             </div>
                         </div>
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group">
                                 <label for="shelf_number" class="title-color">{{ translate('shelf_number') }}</label>
-                                <input type="text" name="shelf_number" class="form-control" 
-                                       value="{{ request('shelf_number') }}" 
+                                <input type="text" name="shelf_number" class="form-control"
+                                       value="{{ request('shelf_number') }}"
                                        placeholder="{{ translate('search_by_shelf_number') }}">
                             </div>
                         </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label class="title-color d-block">{{ translate('inventory_warning') }}</label>
+                                <div class="form-check">
+                                    <input type="checkbox" name="inventory_warning" class="form-check-input"
+                                           value="1" {{ request('inventory_warning') ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="inventory_warning">
+                                        {{ translate('show_low_stock_products') }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group">
+                                <label for="order_by" class="title-color">{{ translate('order_by') }}</label>
+                                <select name="order_by" class="form-control">
+                                    <option value="desc" {{ request('order_by') == 'desc' ? 'selected' : '' }}>
+                                        {{ translate('DESC') }}
+                                    </option>
+                                    <option value="asc" {{ request('order_by') == 'asc' ? 'selected' : '' }}>
+                                        {{ translate('Asc') }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+
                         <div class="col-12">
                             <div class="d-flex gap-3 justify-content-end">
                                 <a href="{{ route('admin.products.list',['type'=>request('type')]) }}"

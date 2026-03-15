@@ -109,10 +109,17 @@ class ProductController extends BaseController
             'request_status' => $type == 'new-request' ? 0 : ($type == 'approved' ? '1' : ($type == 'denied' ? '2' : 'all')),
             'reference_number' => $request['reference_number'],
             'shelf_number' => $request['shelf_number'],
+            'sku' => $request['sku'],
+            'from_price' => $request['from_price'],
+            'to_price' => $request['to_price'],
+            'from_date' => $request['from_date'],
+            'to_date' => $request['to_date'],
+            'inventory_warning' => $request['inventory_warning'],
         ];
+        $orderBy = ['id' => $request['order_by'] ?? 'desc'];
         $searchValue = $request['searchValue'];
         $products = $this->productRepo->getListWhere(
-            orderBy: ['id' => 'desc'],
+            orderBy: $orderBy,
             searchValue: $searchValue,
             filters: $filters,
             relations: ['translations', 'seoInfo', 'clearanceSale' => function ($query) {

@@ -266,7 +266,7 @@
                                    }'>
                                 <div class="d-none d-md-block media-body text-right">
                                     <h5 class="profile-name mb-0">{{$vendor->name}}</h5>
-                                    <span class="fz-12">{{ Str::limit($shop->name, 20) }}</span>
+                                    <span class="fz-12">{{ Str::limit($shop?->name, 20) }}</span>
                                 </div>
                                 <div class="avatar avatar-sm avatar-circle">
                                     <img class="avatar-img"

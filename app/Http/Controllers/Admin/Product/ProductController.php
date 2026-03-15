@@ -190,9 +190,17 @@ class ProductController extends BaseController
             'sub_sub_category_id' => $request['sub_sub_category_id'],
             'reference_number' => $request['reference_number'],
             'shelf_number' => $request['shelf_number'],
+            'sku' => $request['sku'],
+            'from_price' => $request['from_price'],
+            'to_price' => $request['to_price'],
+            'from_date' => $request['from_date'],
+            'to_date' => $request['to_date'],
+            'inventory_warning' => $request['inventory_warning'],
         ];
 
-        $products = $this->productRepo->getListWhere(orderBy: ['id' => 'desc'], searchValue: $request['searchValue'], filters: $filters, relations: [
+        $orderBy = ['id' => $request['order_by'] ?? 'desc'];
+
+        $products = $this->productRepo->getListWhere(orderBy: $orderBy, searchValue: $request['searchValue'], filters: $filters, relations: [
             'clearanceSale' => function ($query) {
                 return $query->active();
             }
