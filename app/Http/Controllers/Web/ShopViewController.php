@@ -438,13 +438,21 @@ class ShopViewController extends Controller
     public function getShopCategoriesList($products)
     {
         $categoryInfoDecoded = [];
+//        foreach ($products->pluck('category_ids')->toArray() as $info) {
+//            if($info!=null){
+//                $categoryInfoDecoded[] = json_decode($info, true);
+//            }
+//
+//        }
+
         foreach ($products->pluck('category_ids')->toArray() as $info) {
-            if($info!=null){
-                $categoryInfoDecoded[] = json_decode($info, true);
+            if ($info !== null && $info !== '') {   // also reject empty strings
+                $decoded = json_decode($info, true);
+                if (is_array($decoded)) {           // only keep valid arrays
+                    $categoryInfoDecoded[] = $decoded;
+                }
             }
-
         }
-
         $categoryIds = [];
         foreach ($categoryInfoDecoded as $decoded) {
             foreach ($decoded as $info) {

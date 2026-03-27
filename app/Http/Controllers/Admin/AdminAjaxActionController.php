@@ -31,13 +31,19 @@ class AdminAjaxActionController extends Controller
     }
 
     public function get_products(Request $request){
+        $filters = ['added_by' => 'in_house'];
+        if (!empty($request->category_id)) {
+            $filters['category_id'] = $request->category_id;
+        }
+        if (!empty($request->sub_category_id)) {
+            $filters['sub_category_id'] = $request->sub_category_id;
+        }
+        if (!empty($request->sub_sub_category_id)) {
+            $filters['sub_sub_category_id'] = $request->sub_sub_category_id;
+        }
         $products = $this->productRepo->getListWithScope(
             scope: 'active',
-            filters: [
-                'category_id' => $request->category_id,
-                'sub_category_id' => $request->sub_category_id,
-                'sub_sub_category_id' => $request->sub_sub_category_id
-            ],
+            filters: $filters,
             dataLimit: 'all'
         );
         return response()->json($products);
@@ -45,18 +51,28 @@ class AdminAjaxActionController extends Controller
     public function get_products_clearance(Request $request)
     {
         $clearanceProductIds = $this->stockClearanceProductRepo->getListWhere(filters: [ 'added_by' => 'admin' ]  )->pluck('product_id')->toArray();
+
+        $filters = ['added_by' => 'in_house'];
+        if (!empty($request->category_id) && $request->category_id !== 'null') {
+            $filters['category_id'] = $request->category_id;
+        }
+        if (!empty($request->sub_category_id) && $request->sub_category_id !== 'null') {
+            $filters['sub_category_id'] = $request->sub_category_id;
+        }
+        if (!empty($request->sub_sub_category_id) && $request->sub_sub_category_id !== 'null') {
+            $filters['sub_sub_category_id'] = $request->sub_sub_category_id;
+        }
+
         $products = $this->productRepo->getListWithScope(
             orderBy: ['id' => 'desc'],
             scope: "active",
-            filters: [
-                'added_by' => 'in_house',
-                'category_id' => $request->category_id,
-                'sub_category_id' => $request->sub_category_id,
-                'sub_sub_category_id' => $request->sub_sub_category_id,
-            ],
+            searchValue: !empty($request->search) ? $request->search : null,
+            filters: $filters,
             whereNotIn: ['id' => $clearanceProductIds],
             relations: ['brand', 'category', 'seller.shop'],
             dataLimit: 'all');
-        return response()->json($products);
+
+        $html = view('admin-views.partials._search-product', compact('products'))->render();
+        return response()->json(['result' => $html]);
     }
 }

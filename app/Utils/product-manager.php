@@ -2343,9 +2343,14 @@ class ProductManager
                 $featuredDealProductIDs = $featuredDealID ? FlashDealProduct::where('flash_deal_id', $featuredDealID)->pluck('product_id')->toArray() : [];
                 return $query->whereIn('id', $featuredDealProductIDs);
             })
+//            ->when($request->has('name') && !empty($request['name']), function ($query) use ($request) {
+//                $searchName = str_ireplace(['\'', '"', ',', ';', '<', '>', '?'], ' ', preg_replace('/\s\s+/', ' ', $request['name']));
+//                return $query->orderByRaw("CASE WHEN name LIKE '%{$searchName}%' THEN 1 ELSE 2 END, LOCATE('{$searchName}', name), name");
+//            })
             ->when($request->has('name') && !empty($request['name']), function ($query) use ($request) {
                 $searchName = str_ireplace(['\'', '"', ',', ';', '<', '>', '?'], ' ', preg_replace('/\s\s+/', ' ', $request['name']));
-                return $query->orderByRaw("CASE WHEN name LIKE '%{$searchName}%' THEN 1 ELSE 2 END, LOCATE('{$searchName}', name), name");
+                return $query->where('name', 'like', '%' . $searchName . '%')
+                    ->orderByRaw("CASE WHEN name LIKE '%{$searchName}%' THEN 1 ELSE 2 END, LOCATE('{$searchName}', name), name");
             })
             ->when(($request['data_from'] == 'search' && !empty($request['search'])) || !empty($request['product_name']), function ($query) use ($request) {
                 $searchKey = $request->search ? $request->search : $request['product_name'];

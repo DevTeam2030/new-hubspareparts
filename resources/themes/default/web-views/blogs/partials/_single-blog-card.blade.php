@@ -49,13 +49,7 @@
     }
     .bc-card:hover .bc-card__img { transform: scale(1.07); }
 
-    /* Overlay gradient on image */
-    .bc-card__img-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(to top, rgba(10,14,26,.55) 0%, transparent 55%);
-        pointer-events: none;
-    }
+
 
     /* Category pill — floated over image */
     .bc-card__cat {
@@ -92,7 +86,7 @@
         gap: 10px;
     }
 
-    /* Title */
+     Title
     .bc-card__title {
         font-family: 'Cormorant Garamond', Georgia, serif;
         font-size: 19px;
@@ -199,7 +193,7 @@
         <img class="bc-card__img"
              src="{{ getStorageImages(path: $blogItem?->thumbnail_full_url, type:'wide-banner') }}"
              alt="{{ $blogItem?->title }}">
-        <div class="bc-card__img-overlay"></div>
+
 
         @if($blogItem?->category?->name)
             <a href="{{ $catRoute }}" class="bc-card__cat" onclick="event.stopPropagation()">

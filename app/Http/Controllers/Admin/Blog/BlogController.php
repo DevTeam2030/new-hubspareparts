@@ -106,7 +106,7 @@ class BlogController extends Controller
         return view('admin-views.blog.create', compact('categories', 'languages', 'defaultLanguage'));
     }
 
-    public function addBlog(BlogAddRequest $request): JsonResponse
+    public function addBlog(BlogAddRequest $request)
     {
         $imagePath = $request['image'] ? $this->upload(dir: 'blog/image/', format: 'webp', image: $request['image']) : null;
         $storage = config('filesystems.disks.default') ?? 'public';
@@ -133,11 +133,12 @@ class BlogController extends Controller
         $this->addBlogTranslation(request: $request, id: $savedBlog->id);
         $this->blogSeo->create($this->getBlogSeoData(request: $request, blog: $savedBlog, action: 'add'));
 
-        return response()->json([
-            'status' => 1,
-            'redirect' => route('admin.blog.view'),
-            'message' => $request['is_draft'] ? translate('Blog_drafted_successfully') : translate('Blog_published_successfully'),
-        ]);
+//        return response()->json([
+//            'status' => 1,
+//            'redirect' => route('admin.blog.view'),
+//            'message' => $request['is_draft'] ? translate('Blog_drafted_successfully') : translate('Blog_published_successfully'),
+//        ]);
+        return redirect()->route('admin.blog.view');
     }
 
     private function getBlogSeoData(object $request, object|null $blog, $action = null): array
@@ -295,15 +296,10 @@ class BlogController extends Controller
     {
         if ($request->has('image')) {
             $imagePath = $this->updateFile('blog/image/', $blog->image, 'webp', $request->image);
-        } else if ($request->page == 'edit') {
-            $imagePath = $blog->image;
-            if ($blog->image != $blog->draft_image) {
-                $this->deleteFile('blog/image/' . $blog->draft_image);
-            }
         } else {
-            $imagePath = $blog->draft_image;
-            if ($blog->image != $blog->draft_image) {
-                $this->deleteFile('blog/image/' . $blog->image);
+            $imagePath = $blog->image ?: $blog->draft_image;
+            if ($blog->draft_image && $blog->image != $blog->draft_image) {
+                $this->deleteFile('blog/image/' . $blog->draft_image);
             }
         }
 

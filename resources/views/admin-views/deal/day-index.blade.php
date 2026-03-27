@@ -213,7 +213,7 @@
 @endsection
 
 @push('script')
-    <script src="{{dynamicAsset(path: 'public/assets/back-end/js/search-product.js')}}"></script>
+    <script src="{{dynamicAsset(path: 'public/assets/back-end/js/new-search-product.js')}}"></script>
     <script src="{{dynamicAsset(path: 'public/assets/back-end/js/admin/deal.js')}}"></script>
     <script>
         $('#category_id').on('change', function () {
@@ -246,19 +246,22 @@
         });
 
         $(document).ready(function() {
-            // Function to fetch products based on categories
-            function filterProducts() {
-                let category_id = $('#category_id').val();
-                let sub_category_id = $('#sub_category_id').val();
-                let sub_sub_category_id = $('#sub_sub_category_id').val();
+            let searchTimer = null;
+
+            // Function to fetch products based on categories and optional search keyword
+            function filterProducts(search) {
+                let category_id = $('#category_id').val() || '';
+                let sub_category_id = $('#sub_category_id').val() || '';
+                let sub_sub_category_id = $('#sub_sub_category_id').val() || '';
+
+                let data = { search: search || '' };
+                if (category_id) data.category_id = category_id;
+                if (sub_category_id) data.sub_category_id = sub_category_id;
+                if (sub_sub_category_id) data.sub_sub_category_id = sub_sub_category_id;
 
                 $.get({
-                    url: '{{ route("admin.ajax-get-products") }}',
-                    data: {
-                        category_id: category_id,
-                        sub_category_id: sub_category_id,
-                        sub_sub_category_id: sub_sub_category_id
-                    },
+                    url: '{{ route("admin.ajax-get-products-clearance") }}',
+                    data: data,
                     beforeSend: function () {
                         $('.search-result-box').html('<div class="text-center p-4"><i class="tio-dev-loader-1 spin"></i></div>');
                     },
@@ -270,7 +273,16 @@
 
             // Trigger filter when any dropdown changes
             $('#category_id, #sub_category_id, #sub_sub_category_id').on('change', function () {
-                filterProducts();
+                filterProducts($('.search-product').val());
+            });
+
+            // Trigger filter on search input with debounce
+            $(document).on('input', '.search-product', function () {
+                let keyword = $(this).val();
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(function () {
+                    filterProducts(keyword);
+                }, 400);
             });
         });
     </script>

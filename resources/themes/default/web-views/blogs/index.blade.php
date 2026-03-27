@@ -678,30 +678,30 @@
                                             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                                             {{ translate('Featured') }}
                                         </div>
-                                        <div class="bi-featured__body">
-                                            @if($blogItem?->category?->name)
-                                                <div class="bi-featured__tag">{{ Str::limit($blogItem->category->name, 22) }}</div>
-                                            @endif
-                                            <h2 class="bi-featured__title">{{ $blogItem?->title }}</h2>
-                                            <div class="bi-featured__meta">
-                                                @if($blogItem->writer)
-                                                    <div class="bi-featured__meta-item">
-                                                        <i class="fa fa-user-circle"></i>
-                                                        <a href="#" onclick="event.preventDefault()">{{ Str::limit($blogItem->writer, 20) }}</a>
-                                                    </div>
-                                                    <span class="bi-featured__dot">·</span>
-                                                @endif
-                                                <div class="bi-featured__meta-item">
-                                                    <i class="fa fa-calendar-o"></i>
-                                                    <span>{{ date('M d, Y', strtotime($blogItem->publish_date)) }}</span>
-                                                </div>
-                                                <span class="bi-featured__dot">·</span>
-                                                <div class="bi-featured__meta-item">
-                                                    <i class="fa fa-eye"></i>
-                                                    <span>{{ number_format($blogItem->click_count ?? 0) }}</span>
-                                                </div>
-                                            </div>
-                                        </div>
+{{--                                        <div class="bi-featured__body">--}}
+{{--                                            @if($blogItem?->category?->name)--}}
+{{--                                                <div class="bi-featured__tag">{{ Str::limit($blogItem->category->name, 22) }}</div>--}}
+{{--                                            @endif--}}
+{{--                                            <h2 class="bi-featured__title">{{ $blogItem?->title }}</h2>--}}
+{{--                                            <div class="bi-featured__meta">--}}
+{{--                                                @if($blogItem->writer)--}}
+{{--                                                    <div class="bi-featured__meta-item">--}}
+{{--                                                        <i class="fa fa-user-circle"></i>--}}
+{{--                                                        <a href="#" onclick="event.preventDefault()">{{ Str::limit($blogItem->writer, 20) }}</a>--}}
+{{--                                                    </div>--}}
+{{--                                                    <span class="bi-featured__dot">·</span>--}}
+{{--                                                @endif--}}
+{{--                                                <div class="bi-featured__meta-item">--}}
+{{--                                                    <i class="fa fa-calendar-o"></i>--}}
+{{--                                                    <span>{{ date('M d, Y', strtotime($blogItem->publish_date)) }}</span>--}}
+{{--                                                </div>--}}
+{{--                                                <span class="bi-featured__dot">·</span>--}}
+{{--                                                <div class="bi-featured__meta-item">--}}
+{{--                                                    <i class="fa fa-eye"></i>--}}
+{{--                                                    <span>{{ number_format($blogItem->click_count ?? 0) }}</span>--}}
+{{--                                                </div>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
                                     </a>
 
                                     {{-- Divider before grid --}}
@@ -791,6 +791,24 @@
 @endsection
 
 @push('script')
+    @if(isset($blogPlatform) && $blogPlatform == 'app')
+        <script>
+            // Hide preloader after page loads
+            $(document).ready(function() {
+                setTimeout(function() {
+                    $('#app-blog-preloader').fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }, 1000);
+            });
+
+            // Fix blog root container z-index issue
+            $(window).on('load', function() {
+                $('.blog-root-container').css('z-index', 'auto');
+            });
+        </script>
+    @endif
+
     <script src="{{ theme_asset(path: 'public/assets/front-end/js/blog.js') }}"></script>
     <script>
         // Category scroll arrows

@@ -138,7 +138,7 @@
                             <i class="tio-search"></i>
                         </a>
                     </div>
-                    <div class="navbar-tool dropdown d-none d-md-block {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
+                    <div class="navbar-tool dropdown {{Session::get('direction') === "rtl" ? 'mr-md-3' : 'ml-md-3'}}">
                         <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{route('product-compare.index')}}">
                             <i class="navbar-tool-icon fa fa-retweet"></i>
                         </a>
@@ -558,7 +558,7 @@
                             @endif
                         @endif
 
-                        <li class="nav-item dropdown d-none d-md-block {{request()->is('/')?'active':''}}">
+                        <li class="nav-item dropdown {{request()->is('/')?'active':''}}">
                             <a class="nav-link" href="{{route('frontend.blog.index')}}">{{ translate('blog')}}</a>
                         </li>
                     </ul>

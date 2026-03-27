@@ -32,7 +32,14 @@ class FrontendBlogService
             foreach ($domDocument->getElementsByTagName('h2') as $index => $blogTag) {
                 $blogTag->setAttribute('id', 'article-section-' . $index);
             }
-            return $domDocument->saveHTML();
+            $body = $domDocument->getElementsByTagName('body')->item(0);
+            $result = '';
+            if ($body) {
+                foreach ($body->childNodes as $child) {
+                    $result .= $domDocument->saveHTML($child);
+                }
+            }
+            return $result;
         }
         return $description;
     }

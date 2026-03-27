@@ -4,9 +4,9 @@ body {
 
 .blog-root-container {
     height: 100vh;
-    position: fixed;
+    position: relative;
     background: #FFFF;
-    z-index: 99999999;
+    z-index: 1;
     width: 100%;
     overflow-y: auto;
     top: 0;
@@ -22,7 +22,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999999999;
+    z-index: 9999;
 }
 
 #app-blog-preloader .app-loader {
