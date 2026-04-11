@@ -344,6 +344,17 @@
                                     </small>
                                 </div>
                             </div>
+                            @php($quickViewShortDescription = $product->short_description ?? '')
+                            @if(filled(trim(strip_tags($quickViewShortDescription))))
+                                <div class="product-quick-view-short-description mt-2 w-100">
+                                    <div class="product-description-label text-dark font-bold text-capitalize mb-1">
+                                        {{ translate('short_description') }} :
+                                    </div>
+                                    <div class="rich-editor-html-content font-size-sm text-body">
+                                        {!! $quickViewShortDescription !!}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
