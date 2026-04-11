@@ -391,6 +391,7 @@ class ProductController extends BaseController
             'orderDelivered',
             'digitalVariation',
             'seoInfo',
+            'translations',
             'clearanceSale' => function ($query) {
                 return $query->active();
             }

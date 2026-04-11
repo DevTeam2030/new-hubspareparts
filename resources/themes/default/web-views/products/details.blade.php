@@ -444,6 +444,14 @@
                                         @endif
                                     </div>
 
+                                    @php($sidebarShortDescription = $product->short_description ?? '')
+                                    @if(filled(trim(strip_tags($sidebarShortDescription))))
+                                        <div class="product-page-short-description mb-2 fs-13 text-body text-justify">
+                                            <div class="product-description-label text-dark font-bold text-capitalize mb-1">{{ translate('short_description') }} :</div>
+                                            <div class="rich-editor-html-content">{!! $sidebarShortDescription !!}</div>
+                                        </div>
+                                    @endif
+
                                 </form>
                             </div>
                         </div>

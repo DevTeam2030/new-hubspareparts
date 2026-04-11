@@ -246,6 +246,9 @@
                                                 if ($translation->locale == $language && $translation->key == "description") {
                                                     $translate[$language]['description'] = $translation->value;
                                                 }
+                                                if ($translation->locale == $language && $translation->key == "short_description") {
+                                                    $translate[$language]['short_description'] = $translation->value;
+                                                }
                                             }
                                         }
                                         ?>
@@ -264,6 +267,15 @@
                                                 {!! $translate[$language]['description'] ?? $product['details'] !!}
                                             </div>
                                         </div>
+                                        @php($shortDescriptionForLang = $translate[$language]['short_description'] ?? $product['short_description'] ?? '')
+                                        @if(filled(trim(strip_tags($shortDescriptionForLang))))
+                                        <div class="">
+                                            <label class="text-gulf-blue font-weight-bold">{{ translate('short_description').' : ' }}</label>
+                                            <div class="rich-editor-html-content">
+                                                {!! $shortDescriptionForLang !!}
+                                            </div>
+                                        </div>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>

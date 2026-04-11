@@ -392,7 +392,10 @@ class Product extends Model
         if (strpos(url()->current(), '/admin') || strpos(url()->current(), '/vendor') || strpos(url()->current(), '/seller')) {
             return $shortDescription;
         }
-        return $this->translations[2]->value ?? $shortDescription;
+
+        $translation = $this->translations->firstWhere('key', 'short_description');
+
+        return $translation?->value ?? $shortDescription;
     }
     public function getThumbnailFullUrlAttribute(): string|null|array
     {
