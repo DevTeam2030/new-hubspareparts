@@ -188,8 +188,11 @@ class ProductRepository implements ProductRepositoryInterface
             return $query->where('shelf_number', 'like', '%'.$filters['shelf_number'].'%');
         })
             ->when(isset($filters['sku']) && !empty($filters['sku']), function ($query) use ($filters) {
-            return $query->whereHas('stocks', function ($stockQuery) use ($filters) {
-                $stockQuery->where('sku', 'like', '%'.$filters['sku'].'%');
+            return $query->where(function ($skuQuery) use ($filters) {
+                $skuQuery->where('code', 'like', '%'.$filters['sku'].'%')
+                    ->orWhereHas('stocks', function ($stockQuery) use ($filters) {
+                        $stockQuery->where('sku', 'like', '%'.$filters['sku'].'%');
+                    });
             });
         })
             ->when(isset($filters['from_price']) && !empty($filters['from_price']), function ($query) use ($filters) {
